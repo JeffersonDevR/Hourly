@@ -212,9 +212,8 @@ sin tipo ni timezone, sin mapeo día-semana → `dia`).
 
 **No se renombra la carpeta.** El nombre del directorio es del usuario, no del producto.
 
-**Corrección (posterior):** D-014 se escribió originalmente como "Houry". El nombre confirmado es
-**Hourly**. El cambio se aplicó a `pyproject.toml`, `package.json`, la DB, la marca de UI, los
-títulos de los docs y `demo.ps1`. El logo vive en `design/stitch/` y se exporta en SVG.
+**Corrección (posterior):** el nombre definitivo es **Hourly**. D-014 queda superada solo en lo
+relativo al nombre; ver **D-019**.
 
 ## D-015 — Sin `make`: `demo.ps1` + comandos directos
 
@@ -347,7 +346,7 @@ una corrección no necesita volver a subir el archivo.
 no ocurre. El serial (`0.2916667 * 24 * 60 = 420`) sigue soportado porque un Excel generado por
 otra herramienta sí lo trae. Ambas rutas se prueban en `tests/test_importer_coercion.py`.
 
-## D-018 — El producto se llama **Hourly** (reemplaza D-014 en lo relativo al nombre)
+## D-019 — El producto se llama **Hourly** (reemplaza D-014 en lo relativo al nombre)
 
 **Decisión:** el nombre del producto es **Hourly**, no "Houry". D-014 queda superada solo en lo
 que respecta al nombre; el resto de D-014 —que el proyecto vive en `horarios-opencode-kit/` y que
@@ -356,7 +355,7 @@ no se aplana a la raíz— sigue vigente.
 **Motivo:** decisión explícita del usuario. "Hourly" se lee como "cada hora" y resulta más
 pegadizo que "Houry".
 
-**Consecuencias:**
+**Consecuencias (ya aplicadas):**
 - `pyproject.toml` → `name = "hourly-api"`; `package.json` → `"name": "hourly-web"`.
 - DB local: `sqlite:///./hourly.db`.
 - UI: "Hourly" en `<title>`, marca de la navegación lateral y metadatos.
@@ -364,8 +363,5 @@ pegadizo que "Houry".
   clases y la escala están en `design/stitch/tokens.css`, sección MARCA.
 - El turquesa `#5EEAD4` no se usa en la marca: está reservado a las propuestas de la IA.
 
-**Acción pendiente para la sesión de código:** renombrar los paquetes y el archivo de la base de
-datos. Las migraciones no cambian, solo el nombre del archivo.
-
-**Nota de mantenimiento:** hay dos entradas numeradas `D-017` en este documento. No renumerar
-ahora para no romper referencias cruzadas; la siguiente decisión nueva debe ser `D-019`.
+**Nota de mantenimiento:** esta decisión se numeró `D-018` por error, duplicando el número de
+"Contrato del importador". Queda renumerada como `D-019`; la siguiente decisión nueva es `D-020`.

@@ -81,6 +81,6 @@ fijos el horario no existe; repartiendo Inglés entre D4 y D6, sí. Esa es la de
 
 - [`docs/DOMAIN.md`](docs/DOMAIN.md) — entidades, invariantes y el mapeo del Excel
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — API, solver, contrato de la IA
-- [`docs/DECISIONS.md`](docs/DECISIONS.md) — las 18 decisiones y por qué
+- [`docs/DECISIONS.md`](docs/DECISIONS.md) — las 19 decisiones y por qué
 - [`docs/GAPS.md`](docs/GAPS.md) — los casos que faltan, sin maquillar
 - [`design/DESIGN.md`](design/DESIGN.md) — el sistema MALLA
