@@ -1,0 +1,209 @@
+/* ============================================================================
+   Academic Grid Matrix — Dark Accessible · v3
+   Exportado de Stitch · proyecto 3916526485862441063
+   Design system: assets/44af003a88054ae8806013207408fd99
+   Consumido por /fase-06-ui-shell. No inventar tokens nuevos.
+   Contraste: todo texto verificado AAA (>= 7:1). No aclarar muted.
+   ========================================================================= */
+
+:root {
+  /* --- Superficies --- */
+  --mh-canvas:            #08080A;
+  --mh-surface:           #191A1D;  /* tarjeta */
+  --mh-surface-raised:    #23252A;  /* elevada, item activo */
+  --mh-surface-sunken:    #141518;  /* inputs, encabezado de tabla */
+  --mh-chrome:            #0F1012;  /* barra lateral y barra superior */
+  --mh-border:            #2A2C31;  /* separadores */
+  --mh-border-strong:     #33353C;
+  --mh-border-control:    #4A4D57;  /* bordes de input y botón secundario */
+
+  /* --- Texto --- */
+  --mh-text:              #F7F7F5;  /* 16.22:1 sobre surface */
+  --mh-text-secondary:    #C9C9CE;  /* 10.55:1 */
+  --mh-text-muted:        #A8A8AD;  /*  7.35:1 — limite, no aclarar */
+  --mh-text-on-accent:    #08080A;
+
+  /* --- Acento lila --- */
+  --mh-accent:            #C4B5FD;
+  --mh-accent-deep:       #A78BFA;
+  --mh-accent-ink:        #2E1065;  /* 8.25:1 sobre --mh-accent */
+  --mh-accent-surface:    #2A2440;
+
+  /* --- Acento crema --- */
+  --mh-cream:             #F2E6A9;
+  --mh-cream-deep:        #E3D28B;
+  --mh-cream-ink:         #3F3A14;  /* 9.12:1 sobre --mh-cream */
+
+  /* --- Reservado IA: no usar fuera de una propuesta del asistente --- */
+  --mh-ai:                #5EEAD4;
+  --mh-ai-border:         #22D3EE;
+  --mh-ai-surface:        #0C2F2B;
+  --mh-ai-ink:            #042F2E;
+
+  /* --- Estados (siempre con icono + palabra) --- */
+  --mh-success:           #6EE7B7;
+  --mh-success-surface:   #0C2A21;
+  --mh-warning:           #FBBF24;
+  --mh-warning-surface:   #2B2208;
+  --mh-danger:            #FF9C93;
+  --mh-danger-surface:    #2C1310;
+
+  /* --- Tipografia (Inter. Nunca por debajo de 14px) --- */
+  --mh-font:              "Inter", system-ui, sans-serif;
+  --mh-display:           600 40px/48px var(--mh-font);
+  --mh-h1:                600 32px/40px var(--mh-font);
+  --mh-h2:                600 24px/32px var(--mh-font);
+  --mh-h3:                600 20px/28px var(--mh-font);
+  --mh-body-lg:           400 18px/29px var(--mh-font);
+  --mh-body:              400 17px/27px var(--mh-font);   /* base */
+  --mh-body-sm:           400 15px/24px var(--mh-font);
+  --mh-label:             500 16px/24px var(--mh-font);
+  --mh-label-sm:          600 15px/22px var(--mh-font);
+  --mh-label-xs:          600 14px/20px var(--mh-font);   /* piso absoluto */
+  --mh-tracking-tight:    -0.02em;
+
+  /* --- Radios --- */
+  --mh-radius-cell:       8px;
+  --mh-radius-sm:         10px;
+  --mh-radius-md:         14px;
+  --mh-radius-lg:         20px;
+  --mh-radius-full:       9999px;
+
+  /* --- Espaciado --- */
+  --mh-space-1: 4px;  --mh-space-2: 8px;   --mh-space-3: 12px;
+  --mh-space-4: 16px; --mh-space-5: 20px;  --mh-space-6: 24px;
+  --mh-space-7: 32px; --mh-space-8: 40px;  --mh-space-9: 48px;
+  --mh-space-10: 64px;
+
+  /* --- Objetivos y estructura --- */
+  --mh-target-min:       44px;   /* WCAG 2.5.5 AAA y 2.5.8 AA */
+  --mh-target-primary:   48px;
+  --mh-row-table:        56px;
+  --mh-row-checklist:    64px;
+  --mh-cell-height:      64px;
+  --mh-rail-width:       88px;
+  --mh-topbar-height:    72px;
+  --mh-content-max:      1440px;
+  --mh-shadow-card:      0 16px 40px rgba(0, 0, 0, 0.5);
+
+  /* --- Foco: obligatorio en todo elemento interactivo --- */
+  --mh-focus-ring:       3px solid var(--mh-accent);
+  --mh-focus-offset:     3px;
+}
+
+/* Regla global de foco. Prohibido outline:none sin reemplazo. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: var(--mh-focus-ring);
+  outline-offset: var(--mh-focus-offset);
+  border-radius: var(--mh-radius-cell);
+}
+
+/* Respeta la preferencia del sistema. Sin animaciones salvo un fade de 120ms. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ============================================================================
+   Mapeo a Tailwind (tailwind.config.ts → theme.extend)
+   ----------------------------------------------------------------------------
+   colors: {
+     mh: {
+       canvas: 'var(--mh-canvas)', surface: 'var(--mh-surface)',
+       raised: 'var(--mh-surface-raised)', sunken: 'var(--mh-surface-sunken)',
+       chrome: 'var(--mh-chrome)', border: 'var(--mh-border)',
+       'border-control': 'var(--mh-border-control)',
+       text: 'var(--mh-text)', secondary: 'var(--mh-text-secondary)',
+       muted: 'var(--mh-text-muted)',
+       accent: 'var(--mh-accent)', cream: 'var(--mh-cream)',
+       ai: 'var(--mh-ai)', success: 'var(--mh-success)',
+       warning: 'var(--mh-warning)', danger: 'var(--mh-danger)',
+     }
+   }
+   fontSize: {
+     display: ['40px', { lineHeight: '48px', fontWeight: '600' }],
+     h1:      ['32px', { lineHeight: '40px', fontWeight: '600' }],
+     h2:      ['24px', { lineHeight: '32px', fontWeight: '600' }],
+     h3:      ['20px', { lineHeight: '28px', fontWeight: '600' }],
+     body:    ['17px', { lineHeight: '27px' }],
+     'body-sm': ['15px', { lineHeight: '24px' }],
+     label:   ['16px', { lineHeight: '24px', fontWeight: '500' }],
+     'label-xs': ['14px', { lineHeight: '20px', fontWeight: '600' }],
+   }
+   borderRadius: { cell:'8px', sm:'10px', md:'14px', lg:'20px' }
+   fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+   ----------------------------------------------------------------------------
+   NOTA: el proyecto es dark-only. No generar variantes light.
+   ========================================================================= */
+
+/* ============================================================================
+   RESPONSIVE
+   ----------------------------------------------------------------------------
+   Regla madre: NUNCA scroll horizontal de página, y NUNCA encoger la
+   cuadrícula hasta hacerla ilegible. Si no cabe, cambia de forma.
+   Para personas mayores, reducir es fallar: se reordena, no se comprime.
+   ========================================================================= */
+
+:root {
+  --mh-bp-sm: 640px;    /* telefono grande */
+  --mh-bp-md: 768px;    /* tablet vertical */
+  --mh-bp-lg: 1024px;   /* tablet horizontal y laptop pequena */
+  --mh-bp-xl: 1280px;   /* escritorio */
+}
+
+/* --- >= 1280px: escritorio completo -------------------------------------- */
+/* Rail 88px con etiqueta. Cuadricula de 5 dias. Panel lateral de 320px
+   junto a la cuadricula. Texto base 17px. */
+
+/* --- 1024px a 1279px: laptop / tablet horizontal ------------------------- */
+/* Rail 72px, la etiqueta SIGUE VISIBLE (nunca solo icono).
+   La cuadricula conserva los 5 dias y ocupa todo el ancho.
+   El panel "Por colocar" deja de ser lateral y pasa DEBAJO de la cuadricula.
+   Texto base 16px. */
+@media (max-width: 1279px) {
+  :root {
+    --mh-rail-width: 72px;
+    --mh-body: 400 16px/26px var(--mh-font);
+    --mh-h1: 600 28px/36px var(--mh-font);
+  }
+}
+
+/* --- 768px a 1023px: tablet vertical ------------------------------------- */
+/* La cuadricula de 5 dias ya no se lee. Se cambia a UN DIA A LA VEZ con
+   pestanas de dia (Lun..Vie), cada una de 56px de alto, con un punto de
+   color bajo la etiqueta si ese dia tiene conflicto.
+   Las tablas de datos (Docentes, Recursos, Publicar) pasan a tarjetas
+   apiladas: una fila = una tarjeta con pares etiqueta/valor.
+   Las rejillas de 3 columnas pasan a 2. */
+@media (max-width: 1023px) {
+  .mh-grid-days { display: none; }
+  .mh-day-tabs  { display: flex; }
+  .mh-table     { display: block; }
+  .mh-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* --- Piso de soporte: 768px ---------------------------------------------- */
+/* NO se disenan vistas moviles. El producto es una herramienta de escritorio
+   para coordinadores: se usa en laptop o tablet horizontal, nunca en telefono.
+   Por debajo de 768px se muestra un aviso de tamano, no un layout comprimido.
+   La navegacion lateral NUNCA se convierte en barra inferior ni en solo iconos. */
+@media (max-width: 767px) {
+  .mh-desktop-only { display: block; }
+  .mh-app { display: none; }
+}
+
+/* Reglas transversales a todos los breakpoints */
+.mh-day-tabs { display: none; }
+
+/* Todo contenedor con contenido excedente declara su propio scroll y muestra
+   la barra. Prohibido overflow-x:hidden como parche. */
+.mh-scroll-y { overflow-y: auto; overscroll-behavior: contain; }
+.mh-scroll-x { overflow-x: auto; overscroll-behavior: contain; }
+
+/* La zona de acciones fijas reserva espacio: el ultimo elemento del contenido
+   nunca debe quedar tapado (defecto detectado en las pantallas moviles). */
+.mh-sticky-actions { position: sticky; bottom: 0; background: var(--mh-canvas); }
+.mh-content::after { content: ""; display: block; height: 96px; }
+
+@media (max-width: 767px) {
+  .mh-content::after { height: 120px; }
+}

@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+dist/
+*.local
+
+# Entorno (nunca commitear .env real)
+.env
+.env.*
+!.env.example
+
+# SQLite (D-001): la DB vive en el filesystem, no en git
+houry.db
+houry.db-wal
+houry.db-shm
+*.db
+*.db-wal
+*.db-shm
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
