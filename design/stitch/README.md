@@ -6,7 +6,7 @@ archivo, no es fuente de verdad.
 
 Proyecto Stitch: `3916526485862441063`
 Design system: `assets/44af003a88054ae8806013207408fd99` — *Academic Grid Matrix · Dark Accessible*
-Estado: **14 pantallas web entregadas**. Solo web, sin móvil. Piso de soporte 768px.
+Estado: **19 pantallas web entregadas**. Solo web, sin móvil. Piso de soporte 768px.
 
 > **El flujo real del producto son 6 pasos:** Importar → Auditar → Generar → Resolver →
 > Publicar → Probar. El paso 6 vuelve al 3 (bucle de escenario). Las pantallas de Cursos,
@@ -66,10 +66,14 @@ Todas en modo oscuro. El identificador sirve para abrir la pantalla en Stitch.
 | 8 | **Escenario ¿y si…?** | `8a45319e905746f08973bf62b7999114` | Simulación de ausencia con impacto antes de aplicar | 09 |
 | 9 | **Cursos** | `9375e2225b0549d8bbf9714bd72263d0` | Los 4 grupos con su aula titular y estado | 06 |
 | 10 | **Reglas** | `ca4c8ed5fcfb4466ba9e53f0651e3746` | Lenguaje natural → regla interpretada | 08 |
-| 11 | **Sistema de diseño** | `0c9c102a12f54bd0bdc2e718e208ee49` | Hoja de referencia: color, tipografía, botones, estados | — |
-| 12 | **Biblioteca de estados** | `d542d93107ce4c18b71104514f540f78` | Vacío, cargando, error, conflicto, éxito, IA no disponible, trabajando | — |
+| 11 | **Sistema de diseño** | `b2b54e839d36401999c5d6f39da2c38d` | Hoja de referencia: color, tipografía, botones, estados | — |
+| 12 | **Biblioteca de estados** | `443d5b8393ab4198aebcb7183ea8c0f6` | Vacío, cargando, error, conflicto, éxito, IA no disponible, trabajando | — |
 | 13 | **Mapa de flujo v3** | `9a4c2abbbbfb45d295b3c35cedddaab1` | Los 6 pasos reales + las pantallas de configuración | — |
 | 14 | **Identidad de marca** | `7e231b4ba3f94c2397b6f9cd18215864` | Tres propuestas de logo para "Hourly" | — |
+| 15 | **Verificación** | `62960032168347508ceabfe552fdd715` | Las 5 reglas, los bloqueos y la carga docente antes de generar | 06 |
+| 16 | **Importar · paso 1** | `2141617ca7b7471794b555df7fc146f4` | Subir el archivo | 06 |
+| 17 | **Importar · paso 2** | `aa4c64548fad4551a3d9a2d41cc16475` | Mapear hojas y columnas | 06 |
+| 18 | **Importar · paso 4** | `f1bbacb6e1b24fc8a480c2375b152381` | Confirmar la importación | 06 |
 
 **Marca aplicada en las 14.** Logo elegido: concepto **C**, la H geométrica con travesaño lila y
 punto crema. En la barra lateral va en **lockup vertical** (marca arriba, "Hourly" 15px abajo) porque
@@ -134,6 +138,9 @@ No inventar otras cifras: la demo se rompe cuando los números no cuadran entre 
 | Importar, Publicar, Recursos, Escenario | Sin `aria-live` en contadores y estados | Añadir en implementación |
 | Mapa de flujo v3 | Las cuatro tarjetas de configuración truncan su descripción ("4 grupos y s…", "El estado de …") | Acortar el texto o ampliar la tarjeta |
 | Mapa de flujo v3 | Las etiquetas de eyebrow están a 13px, bajo el piso de 14px | Subir a 14px |
+| Verificación | El chip "Exceso" de Carlos Mendoza se pega al número "28 de 24" | Darle su propia línea o quitar el chip, que ya está la barra |
+| Verificación | 5 `outline-none` y un texto a 13px | Regla global de foco en `tokens.css` |
+| Importar · paso 2 | Solo 1 de 39 iconos SVG tiene `aria-hidden` | Marcar los decorativos |
 
 La **Biblioteca de estados** quedó limpia: cero texto bajo 14px, ortografía corregida, y los siete
 estados completos. Es la referencia que debe cumplir la implementación.
@@ -161,12 +168,12 @@ de verdad para esos dos es `tokens.css`, no la imagen de Stitch.
 
 | # | Paso | Estado | Desbloquea |
 |---|---|---|---|
-| 1 | **Importar: pasos 1, 2 y 4** (Subir, Mapear, Confirmar) | pendiente | fases 02 y 06 |
-| 2 | **Enlaces de consulta** (solo lectura, sin login) | pendiente | fase 09 |
-| 3 | **Defectos menores** de la sección 6 | pendiente | nada crítico |
-| 4 | **Logo "Hourly"** — 3 propuestas entregadas | ✅ hecho | identidad de producto |
-
-Después de la primera demo, no antes: comparación de versiones e historial de cambios.
+| 1 | **Verificación** (compuerta antes de generar) | ✅ hecho | fase 07 |
+| 2 | **Importar: pasos 1, 2 y 4** | ✅ hecho | fases 02 y 06 |
+| 3 | **Enlaces de consulta** (solo lectura, sin login) | pendiente | fase 09 |
+| 4 | **Logo "Hourly"** en todas las pantallas | ✅ hecho | identidad de producto |
+| 5 | Comparación de versiones | pendiente, post-demo | nada crítico |
+| 6 | Historial de cambios | pendiente, post-demo | nada crítico |
 
 ---
 
@@ -190,11 +197,15 @@ hacerlo rápido.
 | 8 | Escenario ¿y si…? | `8a45319e905746f08973bf62b7999114` |
 | 9 | Cursos | `9375e2225b0549d8bbf9714bd72263d0` |
 | 10 | Reglas | `ca4c8ed5fcfb4466ba9e53f0651e3746` |
-| 11 | Sistema de diseño | `0c9c102a12f54bd0bdc2e718e208ee49` |
-| 12 | Biblioteca de estados | `d542d93107ce4c18b71104514f540f78` |
+| 11 | Sistema de diseño | `b2b54e839d36401999c5d6f39da2c38d` |
+| 12 | Biblioteca de estados | `443d5b8393ab4198aebcb7183ea8c0f6` |
 | 13 | Mapa de flujo v3 | `9a4c2abbbbfb45d295b3c35cedddaab1` |
 | 14 | Identidad de marca | `7e231b4ba3f94c2397b6f9cd18215864` |
 | 15 | Horario tablet 1024 | `3f9536c0aac04f8fa2090a452e3490b1` |
+| 16 | Verificación | `62960032168347508ceabfe552fdd715` |
+| 17 | Importar · paso 1 Subir | `2141617ca7b7471794b555df7fc146f4` |
+| 18 | Importar · paso 2 Mapear | `aa4c64548fad4551a3d9a2d41cc16475` |
+| 19 | Importar · paso 4 Confirmar | `f1bbacb6e1b24fc8a480c2375b152381` |
 
 ### Cómo ordenarlas en el canvas
 
@@ -243,20 +254,27 @@ Convención para que el canvas se lea de un vistazo:
 | `8a45319e905746f08973bf62b7999114` | `Hourly · Escenario` |
 | `9375e2225b0549d8bbf9714bd72263d0` | `Hourly · Cursos` |
 | `ca4c8ed5fcfb4466ba9e53f0651e3746` | `Hourly · Reglas` |
-| `0c9c102a12f54bd0bdc2e718e208ee49` | `Hourly · Sistema de diseño` |
-| `d542d93107ce4c18b71104514f540f78` | `Hourly · Biblioteca de estados` |
+| `b2b54e839d36401999c5d6f39da2c38d` | `Hourly · Sistema de diseño` |
+| `443d5b8393ab4198aebcb7183ea8c0f6` | `Hourly · Biblioteca de estados` |
 | `9a4c2abbbbfb45d295b3c35cedddaab1` | `Hourly · Mapa de flujo` |
 | `7e231b4ba3f94c2397b6f9cd18215864` | `Hourly · Identidad de marca` |
 | `3f9536c0aac04f8fa2090a452e3490b1` | `Hourly · Horario tablet 1024` |
+| `62960032168347508ceabfe552fdd715` | `Hourly · Verificación` |
+| `2141617ca7b7471794b555df7fc146f4` | `Hourly · Importar 1 Subir` |
+| `aa4c64548fad4551a3d9a2d41cc16475` | `Hourly · Importar 2 Mapear` |
+| `f1bbacb6e1b24fc8a480c2375b152381` | `Hourly · Importar 4 Confirmar` |
 
 Al resto **no hace falta renombrarlo si lo vas a borrar**: sería trabajo doble. Renombrá solo
 las 15. Si preferís no borrar nada todavía, entonces sí poné `DUPLICADO · ` delante de todo lo
 demás para que el canvas se lea, pero el objetivo final es borrarlas.
 
-### Falta un arreglo de contenido
+### Estado de la marca en las pantallas
 
-Tres hojas técnicas todavía dicen "MALLA" **visible en el pie**: Sistema de diseño
-("MALLA Core Engineering"), Biblioteca de estados ("MALLA UI Design System") y Mapa de flujo
-("MALLA · Arquitectura de información v3"). Corregirlo requiere regenerar cada una, o sea +3
-duplicados. Las 12 pantallas restantes solo llevan "MALLA" en el `<title>` del HTML, que es
-invisible y se resuelve en una línea por ruta al implementar.
+Las 15 llevan la marca. **Lección para la implementación: la marca se dibuja siempre con SVG o
+rectángulos en línea, nunca con una etiqueta `<img>`.** En Sistema de diseño y Biblioteca de
+estados el modelo la intentó con una imagen externa y quedó un icono de imagen rota. Se corrigieron
+regenerando las dos.
+
+Falta un solo arreglo de contenido: el pie del **Mapa de flujo** todavía dice "MALLA · Arquitectura
+de información v3". Las otras 14 solo llevan "MALLA" en el `<title>` del HTML, que es invisible y
+se resuelve en una línea por ruta al implementar.

@@ -40,7 +40,7 @@ Esta es la diferencia con casi todo lo demás.
 | Modelo de datos | 23 tablas, invariantes duras en la DB | ✅ |
 | Importador Excel | Lectura, preview con errores por fila, upsert idempotente | ✅ |
 | Validador | 11 códigos de conflicto, escenarios, gravedad por contexto | ✅ |
-| Solver CP-SAT | Generación, reparación greedy, penalización blanda | 🚧 |
+| Solver CP-SAT | Generación, reparación greedy, penalización blanda | ✅ |
 | API | Endpoints de sesiones, propuestas, publicación | ⬜ |
 | Interfaz | Layout, grilla drag & drop, panel de conflictos | ⬜ |
 

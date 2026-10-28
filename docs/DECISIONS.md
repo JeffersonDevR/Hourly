@@ -253,6 +253,13 @@ de tipos (NaN, floats, `NaT`) que es exactamente donde viven las trampas del arc
 **Consecuencia:** si el Excel creciera a decenas de miles de filas, `pandas` vuelve a tener
 sentido. No es el caso de este MVP.
 
+**Corrección (fase 4):** `ortools` declara `pandas` y `numpy` como dependencias transitivas, y
+`ortools.sat.python.cp_model` importa `pandas` al cargarse. O sea: **`pandas` sí está instalado**,
+aunque nuestro código no lo importe en ningún lado y el importador siga leyendo con `openpyxl`.
+Dos matices honestos: el argumento del tamaño (~50 MB) **ya no aplica**, porque OR-Tools lo paga
+igual; y el argumento que sí sobrevive es el de la coerción de tipos, que era el importante
+(`"1.0"` en vez de `"1"`). El importador **no** pasa por `pandas`: usa `openpyxl` crudo.
+
 ## D-017 — Alcance adicional aprobado (4 features)
 
 Features aprobadas después del alcance original. **Las cuatro caen dentro de fases existentes:
@@ -365,3 +372,30 @@ pegadizo que "Houry".
 
 **Nota de mantenimiento:** esta decisión se numeró `D-018` por error, duplicando el número de
 "Contrato del importador". Queda renumerada como `D-019`; la siguiente decisión nueva es `D-020`.
+
+## D-020 — Solve en dos fases con presupuesto determinista
+
+**Decisión:** `resolver()` corre dos fases. Fase 1 busca un plan válido sin objetivo (0.3–0.6 s).
+Fase 2 mejora con un presupuesto **determinista** (`max_deterministic_time=0.5`) además del
+`SOLVER_TIMEOUT_S` de reloj, que sigue siendo el tope duro.
+
+**Motivo (medido, no estimado):** el óptimo exacto de "cero huecos" es una aguja: CP-SAT lo
+encuentra a los **~13 s de reloj** (4.6 unidades deterministas). Con el tope de 20 s no se cumple
+el criterio de "<10 s" de la fase, y cortar por reloj haría que el plan dependa de la velocidad de
+la máquina del pitch. Con presupuesto determinista: `0.5` → 7 huecos en ~2.5 s, `1.0` → 6 huecos,
+sin presupuesto → 0 huecos en 13 s.
+
+**Consecuencia:** la generación completa devuelve **`FACTIBLE`, no `OPTIMO`**. Es deliberado: un
+plan en 2.5 s que el jurado ve nacer vale más que un óptimo que llega cuando ya cambiaste de tema.
+Generación en frío end-to-end: **4.86 s**.
+
+**Desviaciones asociadas al contrato de `ARCHITECTURE.md`:**
+- Código nuevo **`RECURSO_NO_DISPONIBLE`**: el validador no tenía código para "no hay aula libre del
+  tipo y capacidad" (sus `RECURSO_*` describen un recurso asignado pero inválido).
+- `Resultado.objetivo: int | None`, campo extra sobre `(estado, sesiones, diagnostico)`, para poder
+  medir el efecto de la penalización de materias pesadas.
+- La restricción "exactamente una sesión por curso y franja" pasa a `<= 1` cuando la malla no llena
+  la semana; literalmente `== 1` volvería `INFACTIBLE` cualquier estado parcial.
+- El greedy desempata por datos del dominio (día, bloque, curso, asignatura) y no por `sesion.id`:
+  con `uuid4` el desempate por id dejaría de ser determinista.
+
