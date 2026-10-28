@@ -80,8 +80,10 @@ rompe la importación en silencio si se implementa la lectura literal de la tabl
 1. **`habilitado` y `disponible` llegan como `"1.0"` / `"0.0"`, no como `"1"` / `"0"`.**
    Comparar contra `"1"` importa **cero aptitudes** y **cero bloqueos**, sin error y sin excepción.
    Coercionar a número antes de comparar (`float(v) == 1`).
-2. **`inicio` y `fin` son seriales de Excel**, no horas: `0.2916667` = 07:00. Convertir con
-   `hora = round(serial * 24 * 60)`. Los seis bloques van de 07:00 a 13:00.
+2. **`inicio` y `fin` son horas, pero llegan en dos formas según la capa.** En el XML crudo son
+   seriales de Excel (`0.2916667` = 07:00); `openpyxl` los devuelve como `datetime.time` (07:00)
+   porque las celdas están formateadas como hora. La coerción debe aceptar AMBAS formas:
+   `time`, `datetime`, serial `float` y texto. Los seis bloques van de 07:00 a 13:00.
 3. **`Bloques` no trae `tipo` ni `duracion_min`.** Derivar `tipo=clase` y
    `duracion_min = fin - inicio` (60). De ahí sale `SIN_DESCANSOS`, que es correcto y esperado.
 4. **`asignatura.color` no tiene fuente en el Excel.** Asignar una paleta determinista por orden

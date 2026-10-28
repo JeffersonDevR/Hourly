@@ -1,7 +1,7 @@
 """Fixtures comunes: una DB SQLite temporal migrada con Alembic.
 
 Reglas:
-- Nunca se usa `houry.db` (el archivo de desarrollo) ni `data/Datos_prueba_Gnosoft.xlsx`.
+- Nunca se usa `hourly.db` (el archivo de desarrollo) ni `data/Datos_prueba_Gnosoft.xlsx`.
 - El esquema de los tests es el que produce `alembic upgrade head`, no `create_all()`:
   así una migración incompleta rompe los tests en vez de esconderse.
 """
@@ -18,7 +18,7 @@ from tests.dbutil import migrar, url_sqlite
 
 @pytest.fixture(scope="session")
 def url_db(tmp_path_factory: pytest.TempPathFactory) -> str:
-    ruta = tmp_path_factory.mktemp("houry-db") / "houry_test.db"
+    ruta = tmp_path_factory.mktemp("hourly-db") / "hourly_test.db"
     return url_sqlite(ruta)
 
 

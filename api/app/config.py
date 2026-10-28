@@ -26,7 +26,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    database_url: str = "sqlite:///./houry.db"
+    database_url: str = "sqlite:///./hourly.db"
 
     # Asistente IA: API compatible con OpenAI (D-002). Vacío => NullProvider.
     ai_base_url: str | None = None

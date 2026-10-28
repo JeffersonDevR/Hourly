@@ -1,11 +1,11 @@
-# Houry — AGENTS.md
+# Hourly — AGENTS.md
 
-Houry es una app web para configurar horarios escolares sin solapamientos. Hackathon: prioriza una demo end-to-end estable sobre completitud.
+Hourly es una app web para configurar horarios escolares sin solapamientos. Hackathon: prioriza una demo end-to-end estable sobre completitud.
 Flujo estrella: **importar Excel → auditar → solver → IA propone correcciones → aceptar → exportar → escenario "¿y si...?"**
 
 ## Stack (no cambiar sin preguntar)
 - Backend: Python 3.12, FastAPI, SQLAlchemy 2 + Alembic, Pydantic v2, uv, pytest, ruff.
-- Solver: OR-Tools CP-SAT (`api/app/solver`). Importación: pandas + openpyxl. Exportación: openpyxl (Excel) y reportlab (PDF).
+- Solver: OR-Tools CP-SAT (`api/app/solver`). Importación: `openpyxl` solo (D-016, sin pandas). Exportación: openpyxl (Excel) y reportlab (PDF).
 - IA: API compatible con OpenAI (`/v1/chat/completions`) vía SDK `openai`, detrás de la interfaz `AIProvider`. Env `AI_BASE_URL`, `AI_MODEL`, `AI_API_KEY`. Implementaciones: `OpenAICompatibleProvider`, `NullProvider`, `CassetteProvider` (D-002).
 - DB: SQLite en un archivo (D-001). Tipos portables para no cerrar la puerta a otro motor después: `sa.Uuid`, `sa.Enum(..., native_enum=False)`, `sa.JSON`; UUID generado en Python. `PRAGMA foreign_keys=ON` en cada conexión es obligatorio.
 - Frontend: React + Vite + TypeScript, Tailwind, shadcn/ui, TanStack Query, react-router, @dnd-kit/core, zod, vitest.

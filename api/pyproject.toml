@@ -1,7 +1,7 @@
 [project]
-name = "houry-api"
+name = "hourly-api"
 version = "0.1.0"
-description = "Houry API — generador y validador de horarios escolares"
+description = "Hourly API — generador y validador de horarios escolares"
 readme = "../README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [

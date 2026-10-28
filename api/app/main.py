@@ -5,7 +5,7 @@ from app.routers import estado, importaciones
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="Houry API",
+        title="Hourly API",
         version="0.1.0",
         description="Generador y validador de horarios escolares sin solapamientos.",
     )

@@ -24,7 +24,7 @@ export function Inicio() {
           Inicio
         </h1>
         <p className="max-w-[70ch] text-body text-mh-secondary">
-          Houry arma el horario escolar sin solapamientos: importa el Excel, audita los conflictos,
+          Hourly arma el horario escolar sin solapamientos: importa el Excel, audita los conflictos,
           genera el horario y publícalo.
         </p>
       </div>

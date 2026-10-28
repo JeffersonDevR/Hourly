@@ -1,9 +1,9 @@
 {
-  "name": "houry-web",
+  "name": "hourly-web",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Houry — interfaz web del generador de horarios escolares",
+  "description": "Hourly — interfaz web del generador de horarios escolares",
   "packageManager": "pnpm@12.15.0",
   "scripts": {
     "dev": "vite",

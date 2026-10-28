@@ -14,7 +14,7 @@ export function Sidebar() {
         >
           H
         </span>
-        <span className="text-h3 tracking-[-0.02em] text-mh-text">Houry</span>
+        <span className="text-h3 tracking-[-0.02em] text-mh-text">Hourly</span>
       </div>
 
       <nav aria-label="Navegación principal" className="flex-1 overflow-y-auto px-3 py-4">

@@ -56,20 +56,25 @@ Todas en modo oscuro. El identificador sirve para abrir la pantalla en Stitch.
 
 | # | Pantalla | ID | Qué resuelve | Fase |
 |---|---|---|---|---|
-| 1 | **Inicio** | `43497a3b095944df841218a3c79afdc7` | Estado del horario + checklist de 5 pasos | 06 |
-| 2 | **Importar** | `8cc9281ae6114d0f837f455e13385a84` | Paso 3 de 4: revisar errores y avisos del Excel | 06 |
-| 3 | **Horario** | `7b23b749a2fa4c18a6c4689a754c36d6` | Cuadrícula semanal + panel "Por colocar" | 07 |
-| 4 | **Conflictos** | `fa9a3e874529479ca942e781368082ab` | Un conflicto a la vez, con propuesta del asistente | 08 |
-| 5 | **Docentes** | `9c55c3e23b9c412aadef7fa51f28277b` | Tarjetas con barra de carga y alerta de exceso | 06 |
-| 6 | **Recursos** | `6b842346e84f453d9728e58ac1ca992a` | Aulas y espacios especiales | 06 |
-| 7 | **Publicar** | `0ed42bb8282f465dbdaba504c3f134af` | Validación, versiones y exportación | 09 |
-| 8 | **Escenario ¿y si…?** | `dd498073fb694ef78f8e1a039344d990` | Simulación de ausencia con impacto antes de aplicar | 09 |
-| 9 | **Cursos** | `96ae8cc502a049abaca8a6f8a8869723` | Los 4 grupos con su aula titular y estado | 06 |
-| 10 | **Reglas** | `0cd0f3ea065f40d4a24d3571b8eef135` | Lenguaje natural → regla interpretada | 08 |
-| 11 | **Sistema de diseño** | `3779d88030b2417ab61e776f8ee2aede` | Hoja de referencia: color, tipografía, botones, estados | — |
-| 12 | **Biblioteca de estados** | `d97b1c1dec5145f5923a55043ff3b1b4` | Vacío, cargando, error, conflicto, éxito, IA no disponible, trabajando | — |
-| 13 | **Mapa de flujo v3** | `19e7b5cfb9ff492282d376ea3d42c6de` | Los 6 pasos reales + las pantallas de configuración | — |
+| 1 | **Inicio** | `bdaa4d284f39498d9edc4416c85bc4ab` | Estado del horario + checklist de 5 pasos | 06 |
+| 2 | **Importar** | `8d4785123bb64b4fa81f888f32d766cf` | Paso 3 de 4: revisar errores y avisos del Excel | 06 |
+| 3 | **Horario** | `d501bbe30a804ad4a4d2ff4fcf963758` | Cuadrícula semanal + panel "Por colocar" | 07 |
+| 4 | **Conflictos** | `90ca9654e58944499cc6abe5ee61541a` | Un conflicto a la vez, con propuesta del asistente | 08 |
+| 5 | **Docentes** | `f0beab2f23fe430aa0b05f590c6dad31` | Tarjetas con barra de carga y alerta de exceso | 06 |
+| 6 | **Recursos** | `ea5dbf053d774179bb979be914d6d159` | Aulas y espacios especiales | 06 |
+| 7 | **Publicar** | `fb6060ecf53b4cf48e7296786d971bd6` | Validación, versiones y exportación | 09 |
+| 8 | **Escenario ¿y si…?** | `8a45319e905746f08973bf62b7999114` | Simulación de ausencia con impacto antes de aplicar | 09 |
+| 9 | **Cursos** | `9375e2225b0549d8bbf9714bd72263d0` | Los 4 grupos con su aula titular y estado | 06 |
+| 10 | **Reglas** | `ca4c8ed5fcfb4466ba9e53f0651e3746` | Lenguaje natural → regla interpretada | 08 |
+| 11 | **Sistema de diseño** | `0c9c102a12f54bd0bdc2e718e208ee49` | Hoja de referencia: color, tipografía, botones, estados | — |
+| 12 | **Biblioteca de estados** | `d542d93107ce4c18b71104514f540f78` | Vacío, cargando, error, conflicto, éxito, IA no disponible, trabajando | — |
+| 13 | **Mapa de flujo v3** | `9a4c2abbbbfb45d295b3c35cedddaab1` | Los 6 pasos reales + las pantallas de configuración | — |
 | 14 | **Identidad de marca** | `7e231b4ba3f94c2397b6f9cd18215864` | Tres propuestas de logo para "Hourly" | — |
+
+**Marca aplicada en las 14.** Logo elegido: concepto **C**, la H geométrica con travesaño lila y
+punto crema. En la barra lateral va en **lockup vertical** (marca arriba, "Hourly" 15px abajo) porque
+el horizontal no cabe en los 88px. En la barra superior va solo la marca a 24px junto al breadcrumb,
+nunca el wordmark: repetir "Hourly" dos veces por pantalla es ruido.
 
 **Responsive:** Horario tablet `3dee5ce22abb4a658c21dbdafda172f3` (1024).
 
@@ -167,13 +172,91 @@ Después de la primera demo, no antes: comparación de versiones e historial de 
 
 ## 9. Limpieza pendiente en Stitch
 
-No se puede borrar pantallas por MCP (solo `delete_project`). Eliminar a mano:
+**No se puede mover ni borrar pantallas por MCP.** El servidor solo expone `delete_project`.
+Reordenar y borrar es trabajo manual en la UI de Stitch. Lo que sigue es el manifiesto para
+hacerlo rápido.
 
-- `Entrada de Datos Curriculares` (×2 versiones claras)
-- Las dos tarjetas sueltas `DESIGN.md`
+### Las 15 que se quedan
+
+| # | Pantalla | ID |
+|---|---|---|
+| 1 | Inicio | `bdaa4d284f39498d9edc4416c85bc4ab` |
+| 2 | Importar | `8d4785123bb64b4fa81f888f32d766cf` |
+| 3 | Horario | `d501bbe30a804ad4a4d2ff4fcf963758` |
+| 4 | Conflictos | `90ca9654e58944499cc6abe5ee61541a` |
+| 5 | Docentes | `f0beab2f23fe430aa0b05f590c6dad31` |
+| 6 | Recursos | `ea5dbf053d774179bb979be914d6d159` |
+| 7 | Publicar | `fb6060ecf53b4cf48e7296786d971bd6` |
+| 8 | Escenario ¿y si…? | `8a45319e905746f08973bf62b7999114` |
+| 9 | Cursos | `9375e2225b0549d8bbf9714bd72263d0` |
+| 10 | Reglas | `ca4c8ed5fcfb4466ba9e53f0651e3746` |
+| 11 | Sistema de diseño | `0c9c102a12f54bd0bdc2e718e208ee49` |
+| 12 | Biblioteca de estados | `d542d93107ce4c18b71104514f540f78` |
+| 13 | Mapa de flujo v3 | `9a4c2abbbbfb45d295b3c35cedddaab1` |
+| 14 | Identidad de marca | `7e231b4ba3f94c2397b6f9cd18215864` |
+| 15 | Horario tablet 1024 | `3f9536c0aac04f8fa2090a452e3490b1` |
+
+### Cómo ordenarlas en el canvas
+
+Dos filas: **fila 1** las pantallas de la app (1 a 10 + 15), **fila 2** las hojas técnicas (11 a 14).
+
+### Todo lo demás es duplicado y se borra
+
+- `Entrada de Datos Curriculares` (las dos versiones claras)
+- Las tres tarjetas sueltas `DESIGN.md`
 - Las 9 pantallas del sistema claro anterior
 - `Horario Maestro · Dark Fintech Edition` y `Variante Azul Institucional`
-- Las versiones **originales** de Inicio, Docentes, Conflictos, Sistema, Cursos y Reglas que fueron reemplazadas por sus correcciones
+- Toda pantalla cuyo título empiece con `MALLA ·` que no esté en la tabla de arriba
+- Las versiones intermedias de Inicio, Docentes, Conflictos, Sistema, Cursos, Reglas,
+  Biblioteca de estados y Mapa de flujo
 - Las 2 pantallas móviles descartadas
 
-Conservar solo las 12 de la sección 3.
+**Regla para identificarlas:** si el ID no está en la tabla de las 15, se borra.
+
+> `list_screens` es inconsistente: reporta 21 títulos cuando el canvas tiene más. Guiarse por el
+> título y el contenido visual, no por ese conteo.
+
+### Renombrar: solo desde la UI de Stitch
+
+Probado: **no existe herramienta MCP para renombrar**. `edit_screens` no edita el título en el
+lugar — crea una pantalla nueva, o sea un duplicado más. Renombrar es hacer doble clic en el
+título dentro de Stitch y escribir.
+
+Convención para que el canvas se lea de un vistazo:
+
+| Prefijo | Significado |
+|---|---|
+| `Hourly · {Pantalla}` | **Se usa.** Es una de las 15. |
+| `DUPLICADO · {descripción}` | **Se borra.** Versión vieja, intermedia o de otro sistema. |
+
+### Nombres objetivo de las 15 que se quedan
+
+| ID | Nombre a ponerle |
+|---|---|
+| `bdaa4d284f39498d9edc4416c85bc4ab` | `Hourly · Inicio` |
+| `8d4785123bb64b4fa81f888f32d766cf` | `Hourly · Importar` |
+| `d501bbe30a804ad4a4d2ff4fcf963758` | `Hourly · Horario` |
+| `90ca9654e58944499cc6abe5ee61541a` | `Hourly · Conflictos` |
+| `f0beab2f23fe430aa0b05f590c6dad31` | `Hourly · Docentes` |
+| `ea5dbf053d774179bb979be914d6d159` | `Hourly · Recursos` |
+| `fb6060ecf53b4cf48e7296786d971bd6` | `Hourly · Publicar` |
+| `8a45319e905746f08973bf62b7999114` | `Hourly · Escenario` |
+| `9375e2225b0549d8bbf9714bd72263d0` | `Hourly · Cursos` |
+| `ca4c8ed5fcfb4466ba9e53f0651e3746` | `Hourly · Reglas` |
+| `0c9c102a12f54bd0bdc2e718e208ee49` | `Hourly · Sistema de diseño` |
+| `d542d93107ce4c18b71104514f540f78` | `Hourly · Biblioteca de estados` |
+| `9a4c2abbbbfb45d295b3c35cedddaab1` | `Hourly · Mapa de flujo` |
+| `7e231b4ba3f94c2397b6f9cd18215864` | `Hourly · Identidad de marca` |
+| `3f9536c0aac04f8fa2090a452e3490b1` | `Hourly · Horario tablet 1024` |
+
+Al resto **no hace falta renombrarlo si lo vas a borrar**: sería trabajo doble. Renombrá solo
+las 15. Si preferís no borrar nada todavía, entonces sí poné `DUPLICADO · ` delante de todo lo
+demás para que el canvas se lea, pero el objetivo final es borrarlas.
+
+### Falta un arreglo de contenido
+
+Tres hojas técnicas todavía dicen "MALLA" **visible en el pie**: Sistema de diseño
+("MALLA Core Engineering"), Biblioteca de estados ("MALLA UI Design System") y Mapa de flujo
+("MALLA · Arquitectura de información v3"). Corregirlo requiere regenerar cada una, o sea +3
+duplicados. Las 12 pantallas restantes solo llevan "MALLA" en el `<title>` del HTML, que es
+invisible y se resuelve en una línea por ruta al implementar.

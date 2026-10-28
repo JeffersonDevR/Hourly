@@ -29,7 +29,7 @@ INSTRUCCIONES: tuple[tuple[str, str], ...] = (
 )
 
 MEDIA_TYPE_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-NOMBRE_ARCHIVO = "houry-plantilla.xlsx"
+NOMBRE_ARCHIVO = "hourly-plantilla.xlsx"
 
 
 def _escribir_encabezado(hoja: Worksheet, encabezado: tuple[str, ...]) -> None:

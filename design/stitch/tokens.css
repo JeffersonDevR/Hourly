@@ -191,6 +191,41 @@
   .mh-app { display: none; }
 }
 
+/* ============================================================================
+   MARCA — "Hourly", concepto C: la H de horario
+   ----------------------------------------------------------------------------
+   H geometrica con travesano lila y punto crema. Funciona a 24px.
+   El turquesa NO se usa en la marca: esta reservado para propuestas de la IA.
+   ========================================================================= */
+
+/* Lockup vertical para la barra lateral de 88px (el horizontal no cabe). */
+.brand-rail {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding: 16px 0; border-bottom: 1px solid var(--mh-border);
+}
+.brand-rail__word {
+  font: 600 15px/20px var(--mh-font);
+  letter-spacing: -0.02em; color: var(--mh-text);
+}
+
+/* En la barra superior solo va la marca, nunca el wordmark. */
+.brand-top { display: flex; align-items: center; gap: 12px; }
+.brand-top__divider { width: 1px; height: 24px; background: var(--mh-border); }
+
+/* ============================================================================
+   <svg width="36" height="32" viewBox="0 0 36 32" fill="none" role="img" aria-label="Hourly">
+     <rect x="0"  y="3"  width="5" height="26" rx="2" fill="currentColor"/>
+     <rect x="23" y="3"  width="5" height="26" rx="2" fill="currentColor"/>
+     <rect x="0"  y="13" width="28" height="5" rx="2" fill="var(--mh-accent)"/>
+     <rect x="30" y="26" width="5" height="6"  rx="1.5" fill="var(--mh-cream)"/>
+   </svg>
+
+   Usar currentColor en las verticales permite invertir la marca sobre lila:
+   sobre fondo #C4B5FD poner color: var(--mh-accent-ink) en el contenedor.
+   Escala 0.75 para la barra superior: width="27" height="24".
+   Tamano minimo 24px. Por debajo, solo el icono sin el punto crema.
+   ========================================================================= */
+
 /* Reglas transversales a todos los breakpoints */
 .mh-day-tabs { display: none; }
 

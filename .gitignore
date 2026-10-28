@@ -17,9 +17,9 @@ dist/
 !.env.example
 
 # SQLite (D-001): la DB vive en el filesystem, no en git
-houry.db
-houry.db-wal
-houry.db-shm
+hourly.db
+hourly.db-wal
+hourly.db-shm
 *.db
 *.db-wal
 *.db-shm

@@ -200,17 +200,21 @@ sin tipo ni timezone, sin mapeo día-semana → `dia`).
 
 ## D-014 — Nombre del producto y ubicación del proyecto
 
-**Decisión:** el producto se llama **Houry**. El proyecto vive en esta carpeta
+**Decisión:** el producto se llama **Hourly**. El proyecto vive en esta carpeta
 (`horarios-opencode-kit/`); no se aplana a la raíz del workspace.
 
 **Consecuencias:**
 - `README.md`: la carpeta ES el proyecto, `git init` acá. Eliminada la instrucción de copiar a la raíz.
-- `pyproject.toml` → `name = "houry-api"`; `package.json` → `"name": "houry-web"`.
-- DB local: `sqlite:///./houry.db`.
-- UI: "Houry" en `<title>`, marca de la navegación lateral y metadatos.
+- `pyproject.toml` → `name = "hourly-api"`; `package.json` → `"name": "hourly-web"`.
+- DB local: `sqlite:///./hourly.db`.
+- UI: "Hourly" en `<title>`, marca de la navegación lateral y metadatos.
 - Títulos de `AGENTS.md` y `README.md` con el nombre nuevo.
 
 **No se renombra la carpeta.** El nombre del directorio es del usuario, no del producto.
+
+**Corrección (posterior):** D-014 se escribió originalmente como "Houry". El nombre confirmado es
+**Hourly**. El cambio se aplicó a `pyproject.toml`, `package.json`, la DB, la marca de UI, los
+títulos de los docs y `demo.ps1`. El logo vive en `design/stitch/` y se exporta en SVG.
 
 ## D-015 — Sin `make`: `demo.ps1` + comandos directos
 
@@ -249,6 +253,26 @@ de tipos (NaN, floats, `NaT`) que es exactamente donde viven las trampas del arc
 
 **Consecuencia:** si el Excel creciera a decenas de miles de filas, `pandas` vuelve a tener
 sentido. No es el caso de este MVP.
+
+## D-017 — Alcance adicional aprobado (4 features)
+
+Features aprobadas después del alcance original. **Las cuatro caen dentro de fases existentes:
+ninguna agrega una fase nueva.**
+
+| Feature | Dónde cae | Costo real |
+|---|---|---|
+| **Pin de sesión** (`sesion.fijada`) | migración nueva + `fase-04` (pasa a `fijas`) + `fase-07` (toggle en la grilla) | bajo: el backend ya resuelve `fijas` (D-008) |
+| **PDF / vista de impresión por docente** | `fase-09` (exporter ya planificado: openpyxl + reportlab) | casi cero si se usa `@media print` para la vista web |
+| **Diff del escenario** ("se movieron N sesiones, M docentes afectados") | `fase-09`, lectura sobre `historial_cambio` / `propuesta_cambio` | bajo: los datos ya existen (`antes`/`despues`) |
+| **Historial legible** ("qué cambió y cuándo") | `fase-05` (endpoint de lectura) + `fase-09` (panel) | bajo: `historial_cambio` ya existe, solo lectura |
+
+**Pin — motivo:** es la que más valor da por línea escrita. Convierte al solver de "me borra todo"
+en "trabaja conmigo", y el backend ya lo soporta por D-008. Requiere una migración nueva sobre el
+esquema de la fase 1: `sesion.fijada boolean not null default false`.
+
+**Rechazada explícitamente:** enlace público de solo lectura (`enlace_consulta`). Es el mayor valor
+real para una escuela —dejar de mandar Excel por WhatsApp— pero cuesta tabla + ruta + página
+pública y es la única que puede fallar delante del jurado. Queda fuera del MVP (D-012).
 
 ## D-018 — Contrato del importador y códigos de hallazgo
 
@@ -322,3 +346,26 @@ una corrección no necesita volver a subir el archivo.
 `fin` del archivo real: las celdas están formateadas como hora, así que la conversión de serial
 no ocurre. El serial (`0.2916667 * 24 * 60 = 420`) sigue soportado porque un Excel generado por
 otra herramienta sí lo trae. Ambas rutas se prueban en `tests/test_importer_coercion.py`.
+
+## D-018 — El producto se llama **Hourly** (reemplaza D-014 en lo relativo al nombre)
+
+**Decisión:** el nombre del producto es **Hourly**, no "Houry". D-014 queda superada solo en lo
+que respecta al nombre; el resto de D-014 —que el proyecto vive en `horarios-opencode-kit/` y que
+no se aplana a la raíz— sigue vigente.
+
+**Motivo:** decisión explícita del usuario. "Hourly" se lee como "cada hora" y resulta más
+pegadizo que "Houry".
+
+**Consecuencias:**
+- `pyproject.toml` → `name = "hourly-api"`; `package.json` → `"name": "hourly-web"`.
+- DB local: `sqlite:///./hourly.db`.
+- UI: "Hourly" en `<title>`, marca de la navegación lateral y metadatos.
+- Marca gráfica: H geométrica con travesaño lila `#C4B5FD` y punto crema `#F2E6A9`. El SVG, las
+  clases y la escala están en `design/stitch/tokens.css`, sección MARCA.
+- El turquesa `#5EEAD4` no se usa en la marca: está reservado a las propuestas de la IA.
+
+**Acción pendiente para la sesión de código:** renombrar los paquetes y el archivo de la base de
+datos. Las migraciones no cambian, solo el nombre del archivo.
+
+**Nota de mantenimiento:** hay dos entradas numeradas `D-017` en este documento. No renumerar
+ahora para no romper referencias cruzadas; la siguiente decisión nueva debe ser `D-019`.

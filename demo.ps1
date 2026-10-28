@@ -1,4 +1,4 @@
-# Houry — arranque del pitch. Reemplaza al Makefile (D-015).
+# Hourly — arranque del pitch. Reemplaza al Makefile (D-015).
 #
 #   .\demo.ps1          API (:8000) + web (:5173)
 #   .\demo.ps1 -Dev     igual, con --reload en la API

@@ -15,7 +15,7 @@ def sin_entorno(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_defaults_documentados(sin_entorno: None) -> None:
     settings = Settings(_env_file=None)
 
-    assert settings.database_url == "sqlite:///./houry.db"
+    assert settings.database_url == "sqlite:///./hourly.db"
     assert settings.solver_timeout_s == 20.0
     assert settings.ai_base_url is None
     assert settings.ai_model is None

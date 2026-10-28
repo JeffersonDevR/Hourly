@@ -28,7 +28,7 @@ MEDIA_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 @pytest.fixture
 def cliente(sesion_db: Session) -> Iterator[TestClient]:
-    """App real + la sesión del test como dependencia (sin tocar `houry.db`)."""
+    """App real + la sesión del test como dependencia (sin tocar `hourly.db`)."""
     app.dependency_overrides[get_session] = lambda: sesion_db
     try:
         with TestClient(app) as test_client:

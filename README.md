@@ -1,4 +1,4 @@
-# Houry — Kit OpenCode
+# Hourly — Kit OpenCode
 
 Esta carpeta **es** el proyecto: ejecuta `git init` aquí y abre OpenCode en este directorio.
 No copies nada a la raíz del workspace.
