@@ -75,7 +75,7 @@ Todas en modo oscuro. El identificador sirve para abrir la pantalla en Stitch.
 | 17 | **Importar · paso 2** | `aa4c64548fad4551a3d9a2d41cc16475` | Mapear hojas y columnas | 06 |
 | 18 | **Importar · paso 4** | `f1bbacb6e1b24fc8a480c2375b152381` | Confirmar la importación | 06 |
 
-**Marca aplicada en las 14.** Logo elegido: concepto **C**, la H geométrica con travesaño lila y
+**Marca aplicada en las 19.** Logo elegido: concepto **C**, la H geométrica con travesaño lila y
 punto crema. En la barra lateral va en **lockup vertical** (marca arriba, "Hourly" 15px abajo) porque
 el horizontal no cabe en los 88px. En la barra superior va solo la marca a 24px junto al breadcrumb,
 nunca el wordmark: repetir "Hourly" dos veces por pantalla es ruido.
@@ -170,10 +170,14 @@ de verdad para esos dos es `tokens.css`, no la imagen de Stitch.
 |---|---|---|---|
 | 1 | **Verificación** (compuerta antes de generar) | ✅ hecho | fase 07 |
 | 2 | **Importar: pasos 1, 2 y 4** | ✅ hecho | fases 02 y 06 |
-| 3 | **Enlaces de consulta** (solo lectura, sin login) | pendiente | fase 09 |
-| 4 | **Logo "Hourly"** en todas las pantallas | ✅ hecho | identidad de producto |
-| 5 | Comparación de versiones | pendiente, post-demo | nada crítico |
-| 6 | Historial de cambios | pendiente, post-demo | nada crítico |
+| 3 | **Logo "Hourly"** en todas las pantallas | ✅ hecho | identidad de producto |
+| 4 | **Historial de cambios** | **entra al MVP** | fase 09 (D-017) |
+| 5 | **Enlaces de consulta** (solo lectura, sin login) | **fuera de alcance** (D-012, D-017) | nada |
+| 6 | Comparación de versiones | **fuera de alcance** (D-012) | nada |
+
+> **Enlaces de consulta:** descartados a propósito. Cuestan tabla + ruta + página pública y son la
+> única pieza que puede fallar delante del jurado. No hace falta diseñarlos ni exportarlos.
+
 
 ---
 
@@ -183,7 +187,7 @@ de verdad para esos dos es `tokens.css`, no la imagen de Stitch.
 Reordenar y borrar es trabajo manual en la UI de Stitch. Lo que sigue es el manifiesto para
 hacerlo rápido.
 
-### Las 15 que se quedan
+### Las 19 que se quedan
 
 | # | Pantalla | ID |
 |---|---|---|
@@ -222,7 +226,7 @@ Dos filas: **fila 1** las pantallas de la app (1 a 10 + 15), **fila 2** las hoja
   Biblioteca de estados y Mapa de flujo
 - Las 2 pantallas móviles descartadas
 
-**Regla para identificarlas:** si el ID no está en la tabla de las 15, se borra.
+**Regla para identificarlas:** si el ID no está en la tabla de las 19, se borra.
 
 > `list_screens` es inconsistente: reporta 21 títulos cuando el canvas tiene más. Guiarse por el
 > título y el contenido visual, no por ese conteo.
@@ -237,10 +241,10 @@ Convención para que el canvas se lea de un vistazo:
 
 | Prefijo | Significado |
 |---|---|
-| `Hourly · {Pantalla}` | **Se usa.** Es una de las 15. |
+| `Hourly · {Pantalla}` | **Se usa.** Es una de las 19. |
 | `DUPLICADO · {descripción}` | **Se borra.** Versión vieja, intermedia o de otro sistema. |
 
-### Nombres objetivo de las 15 que se quedan
+### Nombres objetivo de las 19 que se quedan
 
 | ID | Nombre a ponerle |
 |---|---|
@@ -265,16 +269,16 @@ Convención para que el canvas se lea de un vistazo:
 | `f1bbacb6e1b24fc8a480c2375b152381` | `Hourly · Importar 4 Confirmar` |
 
 Al resto **no hace falta renombrarlo si lo vas a borrar**: sería trabajo doble. Renombrá solo
-las 15. Si preferís no borrar nada todavía, entonces sí poné `DUPLICADO · ` delante de todo lo
+las 19. Si preferís no borrar nada todavía, entonces sí poné `DUPLICADO · ` delante de todo lo
 demás para que el canvas se lea, pero el objetivo final es borrarlas.
 
 ### Estado de la marca en las pantallas
 
-Las 15 llevan la marca. **Lección para la implementación: la marca se dibuja siempre con SVG o
+Las 19 llevan la marca. **Lección para la implementación: la marca se dibuja siempre con SVG o
 rectángulos en línea, nunca con una etiqueta `<img>`.** En Sistema de diseño y Biblioteca de
 estados el modelo la intentó con una imagen externa y quedó un icono de imagen rota. Se corrigieron
 regenerando las dos.
 
 Falta un solo arreglo de contenido: el pie del **Mapa de flujo** todavía dice "MALLA · Arquitectura
-de información v3". Las otras 14 solo llevan "MALLA" en el `<title>` del HTML, que es invisible y
+de información v3". Las otras 18 solo llevan "MALLA" en el `<title>` del HTML, que es invisible y
 se resuelve en una línea por ruta al implementar.
