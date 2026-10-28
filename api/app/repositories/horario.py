@@ -32,6 +32,13 @@ class RepositorioSesion(Repositorio[SesionDB, Sesion, uuid.UUID]):
 class RepositorioEscenario(Repositorio[EscenarioDB, Escenario, uuid.UUID]):
     modelo = EscenarioDB
 
+    def obtener_por_nombre(self, nombre: str) -> Escenario | None:
+        """Clave natural del upsert: `escenario` no tiene UNIQUE(nombre) en la DB."""
+        fila = self.sesion.scalars(
+            sa.select(EscenarioDB).where(EscenarioDB.nombre == nombre)
+        ).first()
+        return None if fila is None else a_dominio(fila)
+
 
 class RepositorioEscenarioCambio(
     Repositorio[EscenarioCambioDB, EscenarioCambio, uuid.UUID]
@@ -45,3 +52,17 @@ class RepositorioEscenarioCambio(
             )
         ).all()
         return [a_dominio(fila) for fila in filas]
+
+    def obtener_por_franja(
+        self, escenario_id: uuid.UUID, docente_id: uuid.UUID, dia: int, bloque_id: uuid.UUID
+    ) -> EscenarioCambio | None:
+        """Clave natural del overlay: (escenario, docente, día, bloque) (D-005, D-009)."""
+        fila = self.sesion.scalars(
+            sa.select(EscenarioCambioDB).where(
+                EscenarioCambioDB.escenario_id == escenario_id,
+                EscenarioCambioDB.docente_id == docente_id,
+                EscenarioCambioDB.dia == dia,
+                EscenarioCambioDB.bloque_id == bloque_id,
+            )
+        ).first()
+        return None if fila is None else a_dominio(fila)

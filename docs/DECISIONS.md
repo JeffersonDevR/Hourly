@@ -238,4 +238,87 @@ Matar el wrapper de `uv` con `taskkill /T` deja al hijo de Python escuchando en 
 **Consecuencia:** `pnpm` no se instala. Si no está en PATH se usa `corepack pnpm` (viene con
 Node 24). El script no instala nada en el sistema.
 
+## D-016 — `openpyxl` solo, sin `pandas`
 
+**Decisión:** el importador usa `openpyxl` únicamente. `pandas` no entra al proyecto.
+
+**Motivo:** el dataset son 9 hojas con 40 filas útiles como máximo y ~180 en la más grande.
+`pandas` agrega ~50 MB de wheels, un segundo de import en cada arranque y una capa de coerción
+de tipos (NaN, floats, `NaT`) que es exactamente donde viven las trampas del archivo real
+(`"1.0"` en vez de `"1"`). `openpyxl` devuelve los tipos crudos, que es lo que queremos ver.
+
+**Consecuencia:** si el Excel creciera a decenas de miles de filas, `pandas` vuelve a tener
+sentido. No es el caso de este MVP.
+
+## D-018 — Contrato del importador y códigos de hallazgo
+
+**Decisión:** el importador (fase 2) fija estas reglas, que ninguna otra fuente de verdad
+definía. `app/importer` no importa FastAPI ni `app.ai`; la aritmética de docentes vive en
+`app.validator.diagnostico`.
+
+**1. `EstadoHorario` es la entrada compartida del validador.** `app/validator/estado.py`
+define una dataclass con las colecciones del dominio (cursos, docentes, bloques, asignaturas,
+aptitudes, asignaciones, bloqueos, recursos, cambios de escenario, sesiones), todas con default
+vacío. `diagnosticar_carga(estado)` (fase 2) y `validar(estado, escenario)` (fase 3) consumen la
+misma foto, así que un estado parcial (solo carga, sin sesiones) es válido. El importador arma
+ese estado en memoria con UUID deterministas (`uuid5`), porque el diagnóstico solo compara
+identificadores y en el preview todavía no existen los de la DB.
+
+**2. `diagnosticar_carga` devuelve tres códigos**, no solo la sobrecarga. `DOMAIN.md` define la
+gravedad de `DOCENTE_SOBRECARGA`, pero `ARCHITECTURE.md:5` exige además "vs. franjas
+disponibles" y "asignaturas con un único docente habilitado":
+
+| Código | Gravedad | Regla |
+|---|---|---|
+| `DOCENTE_SOBRECARGA` | error | demanda del docente principal > `max_sesiones_semana` |
+| `DOCENTE_SIN_HOLGURA` | error | demanda > franjas de clase libres (5 días × bloques `clase` − bloqueos − cambios de escenario) |
+| `ASIGNATURA_UNICO_DOCENTE` | advertencia | asignatura con demanda y 0 o 1 aptitudes: sin margen para reasignar |
+
+Los tres son diagnóstico en memoria y no se persisten (D-007). Con el archivo real:
+1 `DOCENTE_SOBRECARGA` (D4, 28 > 24) y 9 `ASIGNATURA_UNICO_DOCENTE` (todas menos Inglés).
+
+**3. Códigos de hallazgo del importador.** Además de los de `DOMAIN.md` (`DURACION_BLOQUE_INCONSISTENTE`,
+`SIN_DESCANSOS`, `FILAS_VACIAS_IGNORADAS`, `DUPLICADO`, `DOCENTE_NO_RECONOCIDO`,
+`CURSO_NO_RECONOCIDO`), el importador reporta `APTITUD_FALTANTE` (docente asignado sin
+habilitación), `ASIGNATURA_NO_RECONOCIDA`, `TIPO_RECURSO_NO_RECONOCIDO`, `BLOQUE_NO_RECONOCIDO`,
+`DIA_NO_RECONOCIDO`, `HOJA_FALTANTE`, `VALOR_REQUERIDO`, `BLOQUE_INVALIDO`,
+`CURSO_SIN_ESTUDIANTES` y `DOCENTE_SIN_MAXIMO`. Todos llevan hoja, fila y columna.
+`ASIGNATURA_UNICO_DOCENTE` es un diagnóstico, no un hallazgo de celda: no tiene fila.
+
+**4. Bloqueantes vs. no bloqueantes.** `severidad` describe el dato; `bloqueante` decide si la
+fila se puede escribir. Son ejes distintos:
+
+- No bloqueantes: `DURACION_BLOQUE_INCONSISTENTE`, `SIN_DESCANSOS`, `FILAS_VACIAS_IGNORADAS`,
+  `DOCENTE_SOBRECARGA`, `CURSO_SIN_ESTUDIANTES`, `DOCENTE_SIN_MAXIMO`, `DIA_NO_RECONOCIDO`.
+  El archivo real se confirma entero aunque D4 esté sobrecargado: la sobrecarga es un problema
+  del solver, no de la escritura.
+- El resto bloquea su fila: la confirmación la omite y escribe las demás.
+
+`DIA_NO_RECONOCIDO` es advertencia por pedido explícito de la fase 2 ("nunca una excepción"),
+pero la fila se omite igual porque `disponibilidad_bloqueo.dia` es NOT NULL.
+
+**5. `estudiantes` y `max_sesiones_semana` en 0 o vacío** se avisan (`CURSO_SIN_ESTUDIANTES`,
+`DOCENTE_SIN_MAXIMO`) y se guardan como 0. Esos dos ceros son el tope duro que CP-SAT tomaría al
+pie de la letra; el aviso nombra la causa real antes de que el solver diga INFACTIBLE.
+
+**6. Cada reanálisis es autoritativo.** `POST /importaciones` y `PATCH .../filas` borran y
+regeneran los `importacion_error` de esa importación, igual que `POST /horarios/{v}/validar`
+(D-011). `importacion_error.corregido` no se usa en la fase 2: la fila corregida desaparece del
+set, así que no quedan errores fantasma.
+
+**7. `disponibilidad_bloqueo` importado usa `origen=personal`** y
+`detalle="Importado de la hoja Disponibilidad"`: el Excel no distingue el motivo y el enum de
+`DOMAIN.md` no tiene un valor "importado" (agregarlo sería un valor de enum inventado).
+
+**8. `PATCH .../filas` identifica la celda por `(hoja, fila, columna)`**, con la fila de Excel y
+el encabezado (o la letra) de la columna, los mismos valores que devuelve el hallazgo. El libro se
+reanaliza completo: no hay una segunda ruta de validación.
+
+**9. `importacion.resumen` guarda las hojas crudas JSON-safe** (`time` → `"HH:MM:SS"`), no las
+entidades ya convertidas. Así el preview, el PATCH y la confirmación parten del mismo registro y
+una corrección no necesita volver a subir el archivo.
+
+**10. Corrección a `DOMAIN.md`, trampa 2.** `openpyxl` devuelve `datetime.time` para `inicio` y
+`fin` del archivo real: las celdas están formateadas como hora, así que la conversión de serial
+no ocurre. El serial (`0.2916667 * 24 * 60 = 420`) sigue soportado porque un Excel generado por
+otra herramienta sí lo trae. Ambas rutas se prueban en `tests/test_importer_coercion.py`.

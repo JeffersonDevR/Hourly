@@ -46,3 +46,16 @@ class RepositorioDisponibilidad(
             )
         ).all()
         return [a_dominio(fila) for fila in filas]
+
+    def obtener_por_franja(
+        self, docente_id: uuid.UUID, dia: int, bloque_id: uuid.UUID
+    ) -> DisponibilidadBloqueo | None:
+        """Clave natural UNIQUE(docente_id, dia, bloque_id) (D-009)."""
+        fila = self.sesion.scalars(
+            sa.select(DisponibilidadBloqueoDB).where(
+                DisponibilidadBloqueoDB.docente_id == docente_id,
+                DisponibilidadBloqueoDB.dia == dia,
+                DisponibilidadBloqueoDB.bloque_id == bloque_id,
+            )
+        ).first()
+        return None if fila is None else a_dominio(fila)

@@ -35,13 +35,20 @@ def sesion_db(motor: sa.Engine) -> Iterator[Session]:
     """Sesión por test dentro de una transacción externa que se revierte al final.
 
     Cada test empieza con la DB vacía y no deja rastro: el estado se crea en el test.
+
+    `join_transaction_mode="rollback_only"` es obligatorio: los endpoints hacen
+    `commit()` y con `create_savepoint` ese commit llegaría al archivo, dejando filas
+    para el test siguiente. En este modo `commit()` solo hace `flush()` y la
+    transacción externa (la del fixture) sigue siendo la única que decide.
     """
     conexion = motor.connect()
     transaccion = conexion.begin()
-    sesion = Session(bind=conexion, join_transaction_mode="create_savepoint")
+    sesion = Session(bind=conexion, join_transaction_mode="rollback_only")
     try:
         yield sesion
     finally:
         sesion.close()
-        transaccion.rollback()
+        # Un IntegrityError intencional deja la transacción ya revertida por SQLAlchemy.
+        if transaccion.is_active:
+            transaccion.rollback()
         conexion.close()

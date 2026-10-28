@@ -11,6 +11,10 @@ dependencies = [
     "pydantic-settings>=2.6",
     "sqlalchemy>=2.0.36",
     "alembic>=1.14",
+    # Importación de Excel: openpyxl solo, sin pandas (D-016).
+    "openpyxl>=3.1",
+    # UploadFile multipart del endpoint POST /api/importaciones.
+    "python-multipart>=0.0.9",
 ]
 
 [dependency-groups]

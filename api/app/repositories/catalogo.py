@@ -37,6 +37,13 @@ class RepositorioInstitucion(Repositorio[InstitucionDB, Institucion, uuid.UUID])
 class RepositorioGrado(Repositorio[GradoDB, Grado, uuid.UUID]):
     modelo = GradoDB
 
+    def obtener_por_orden(self, orden: int) -> Grado | None:
+        """Clave natural del upsert de importación: el dígito del código de curso."""
+        fila = self.sesion.scalars(
+            sa.select(GradoDB).where(GradoDB.orden == orden)
+        ).first()
+        return None if fila is None else a_dominio(fila)
+
 
 class RepositorioCurso(RepositorioCodigo[CursoDB, Curso]):
     modelo = CursoDB
