@@ -79,6 +79,7 @@ fijos el horario no existe; repartiendo Inglés entre D4 y D6, sí. Esa es la de
 
 ## Documentación
 
+- [`docs/STATE.md`](docs/STATE.md) — **estado operativo**: qué falta, en qué orden, y cómo retomar en otra máquina
 - [`docs/DOMAIN.md`](docs/DOMAIN.md) — entidades, invariantes y el mapeo del Excel
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — API, solver, contrato de la IA
 - [`docs/DECISIONS.md`](docs/DECISIONS.md) — las 19 decisiones y por qué

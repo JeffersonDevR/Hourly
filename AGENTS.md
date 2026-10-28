@@ -38,6 +38,7 @@ Fuentes de verdad: `docs/DOMAIN.md` (entidades, invariantes, mapeo del Excel) y 
 - Fuera de alcance del MVP: bloques dobles, grupos mixtos, sustituciones por fecha (dejar columnas/hooks, sin UI). La ausencia de un docente SÍ está en alcance, pero se modela como escenario de indisponibilidad (D-005): un "¿y si D3 no está esta semana?", no un registro histórico de sustituciones por fecha.
 
 ## Cómo trabajar
+- Si abrís esto en otra máquina u otra sesión: leé `docs/STATE.md` primero. Dice dónde estamos y qué falta.
 - Sigue los comandos `/fase-XX` en orden (`.opencode/commands/`). No adelantes fases.
 - Antes de terminar una tarea: `uv run --directory api pytest` y `uv run --directory api ruff check .` en verde (más `corepack pnpm --dir web typecheck` si tocaste `web/`), y un resumen corto de lo hecho y lo pendiente. No hay `make` (D-015).
 - Si una decisión no está en `docs/`, elige la opción más simple, anótala en `docs/DECISIONS.md` y sigue. Pregunta solo si bloquea.
