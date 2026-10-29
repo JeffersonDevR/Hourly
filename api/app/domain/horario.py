@@ -35,6 +35,7 @@ class Sesion:
     dia: int
     bloque_id: uuid.UUID
     recurso_id: uuid.UUID | None = None
+    fijada: bool = False
     id: uuid.UUID = field(default_factory=uuid.uuid4)
     created_at: datetime | None = None
     updated_at: datetime | None = None

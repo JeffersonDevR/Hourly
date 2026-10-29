@@ -98,6 +98,14 @@ fijas=sesiones no afectadas)` → propuestas `cambiar_docente` filtradas por `ap
 **Caso de falla esperado:** el reemplazante ya está en su `max_sesiones_semana` →
 `INFACTIBLE` con diagnóstico de `diagnosticar_carga`.
 
+**Corrección (fase 9, medida):** el flujo decía `fijas = sesiones no afectadas`. Con el Excel real
+la grilla está **100% llena** (cada curso ocupa sus 30 franjas), así que dejar fijas 119 de 120
+sesiones deja **una sola** franja libre para la que se mueve; si esa franja es la bloqueada, el
+solver devuelve `INFACTIBLE` por construcción, no por el escenario. El escenario re-planifica la
+**semana completa** con el overlay activo (`fijas=()`), que es lo que el criterio de la fase pide
+("aplicar el escenario re-planifica y deja 0 conflictos"). `sesiones_afectadas` se sigue informando:
+es el impacto que el usuario ve antes de confirmar.
+
 ## D-006 — Materias pesadas consecutivas: regla BLANDA
 
 **Decisión:** `asignatura.es_pesada (bool)`. La adyacencia pesada-pesada se penaliza en el
@@ -307,6 +315,12 @@ disponibles" y "asignaturas con un único docente habilitado":
 Los tres son diagnóstico en memoria y no se persisten (D-007). Con el archivo real:
 1 `DOCENTE_SOBRECARGA` (D4, 28 > 24) y 9 `ASIGNATURA_UNICO_DOCENTE` (todas menos Inglés).
 
+**Corrección (fase 12) — tipo de bloque inferido:** la hoja `Bloques` no tiene columna `tipo`, y
+antes toda fila se importaba como `clase`. Un colegio cuyo Excel trae un recreo lo veía convertirse
+en bloque de clase y el solver podía meter una sesión ahí. Ahora `duracion_min <= 30` ⇒ `descanso`
+(las clases reales duran 45–60), y el análisis reporta `RECREO_INFERIDO` (no bloqueante) listando
+los bloques que infirió. Con el archivo real no cambia nada: sus 6 bloques duran 60.
+
 **3. Códigos de hallazgo del importador.** Además de los de `DOMAIN.md` (`DURACION_BLOQUE_INCONSISTENTE`,
 `SIN_DESCANSOS`, `FILAS_VACIAS_IGNORADAS`, `DUPLICADO`, `DOCENTE_NO_RECONOCIDO`,
 `CURSO_NO_RECONOCIDO`), el importador reporta `APTITUD_FALTANTE` (docente asignado sin
@@ -399,3 +413,128 @@ Generación en frío end-to-end: **4.86 s**.
 - El greedy desempata por datos del dominio (día, bloque, curso, asignatura) y no por `sesion.id`:
   con `uuid4` el desempate por id dejaría de ser determinista.
 
+
+## D-021 — Contrato de la API de horarios (fase 5)
+
+Decisiones que la fase 5 tuvo que tomar porque ninguna fuente de verdad las definía.
+
+**1. Errores de la API: `{codigo, mensaje}` en el nivel superior.** Un handler de
+`HTTPException` en `main.py` aplana el `detail`. `importaciones` cambió de `{detail}` a este
+formato y ningún consumidor dependía del anterior. Códigos de la fase: `NO_ENCONTRADO`,
+`REFERENCIA_INVALIDA`, `CODIGO_DUPLICADO`, `NOMBRE_DUPLICADO`, `EN_USO`, `ASIGNACION_DUPLICADA`,
+`VERSION_PUBLICADA`, `BLOQUE_NO_CLASE`, `DOCENTE_DOBLE`, `CURSO_DOBLE`, `RECURSO_DOBLE`,
+`CONFLICTOS_ABIERTOS`, `SESION_DUPLICADA`, `NADA_QUE_DESHACER`, `NADA_QUE_REHACER`,
+`PROPUESTA_CERRADA`, `PROPUESTA_INVALIDA`, `FORMATO_NO_SOPORTADO`.
+
+**2. Una versión `publicado` es inmutable: editar, mover o borrar una sesión responde 409
+`VERSION_PUBLICADA`.** Está en el servicio, no en la UI, y adelanta el criterio que `fase-09`
+pide explícitamente. Deshacer y rehacer también exigen borrador: si no, se podría editar
+indirectamente una versión publicada.
+
+**3. Deshacer/rehacer necesita una columna: `historial_cambio.deshecho` (migración
+`9c1f0a7d2b3e`).** Deshacer marca la entrada en vez de borrarla y rehacer la reaplica. Cualquier
+mutación nueva borra las entradas deshechas, así que **el redo no sobrevive a otra edición**
+(el caso que `GAPS.md` dejaba abierto).
+
+**4. `generar` persiste por diferencia, no truncando.** `resolver` devuelve fijas + generadas con
+el id original de las fijas (`id_sesion` es `uuid5`), así que sólo se insertan las nuevas, se
+actualizan las movidas y se borran las que sobran. Reinsertar todo cambiaría los ids de lo que
+no se movió y rompería las referencias del historial.
+
+**5. `POST /horarios/{v}/sesiones` no corre `validar()` antes de escribir.** Las invariantes
+duras las impone la DB (D-001) y el `IntegrityError` se traduce al código del conflicto
+(`DOCENTE_DOBLE`/`CURSO_DOBLE`/`RECURSO_DOBLE`) dentro de un `SAVEPOINT`. Las reglas blandas
+nunca bloquean la escritura (regla 4 de `AGENTS.md`); se ven al validar.
+
+**6. Exportación: Excel en la fase 5, PDF en la fase 9.** `reportlab` no está instalado y
+D-017 ya asigna el PDF de docente a la fase 9; `formato=pdf` responde 400
+`FORMATO_NO_SOPORTADO`. Vistas: `curso`, `docente`, `recurso` y `general` (una hoja por curso).
+
+**7. Propuestas: greedy ahora, CP-SAT con `fijas` e IA en las fases 8 y 9.** `POST
+/conflictos/{id}/propuestas` corre `reparar_greedy` y, si no hay propuestas válidas, devuelve
+`alerta` con `diagnosticar_carga`. El paso 2 de D-003 (CP-SAT con `fijas`) llega con el flujo
+de escenarios de la fase 9 y el paso 3 (IA) con la fase 8.
+
+**8. `GET /horarios/{v}/arrastre` valida 30 veces por request** (una por franja de clase),
+~50 ms. Es aceptable para una grilla de demo; si la UI lo llama en cada movimiento, hay que
+cachear las reglas que no dependen de la sesión.
+
+## D-022 — Reglas en lenguaje natural: dónde aterrizan y qué no hace la IA
+
+Cierra el hueco que `fase-08` dejaba abierto: `POST /reglas/interpretar` devolvía una regla
+"editable" sin decir dónde se guardaba.
+
+**1. No hay tabla `regla`.** Una restricción "tal docente no puede tal día/bloque" es exactamente
+`disponibilidad_bloqueo(docente_id, dia, bloque_id, origen, detalle)`. Confirmar una regla = escribir
+esas filas con `origen=personal` y `detalle="Regla: <texto>"`. Borrar una regla = borrar esas filas.
+El validador y el solver ya la respetan sin tocar nada.
+
+**2. `POST /reglas/confirmar` es el único que escribe.** Idempotente por
+`UNIQUE(docente_id, dia, bloque_id)`: confirmar dos veces no duplica. `bloquea=false` libera (borra)
+en vez de bloquear, para que "D3 libre el viernes B6" signifique algo.
+
+**3. La interpretación tiene tres orígenes, en este orden:** parser determinista (D-004, sin red),
+proveedor de IA, y modo manual (tarjeta vacía con el mensaje). Si no hay proveedor y el parser no
+matchea, **no se inventa una regla**: se abre la tarjeta para elegir a mano.
+
+**4. `generar` persiste el diagnóstico cuando falla.** D-007 dice que `diagnosticar_carga` no se
+persiste *antes* de generar (no hay versión). Cuando la generación devuelve `INFACTIBLE`/`TIMEOUT`
+**sí** hay versión, y el motivo se escribe como `conflicto` de esa versión para que aparezca donde el
+usuario resuelve todo. Con el Excel real: `DOCENTE_SOBRECARGA` de D4 (28 > 24) más
+`ASIGNATURA_UNICO_DOCENTE` ×9 (advertencias) y `MALLA_INCUMPLIDA` ×40.
+
+**5. La IA nunca escribe el horario.** Sus propuestas se aplican sobre una copia, se pasan por
+`validar()` y se descartan si agregan conflictos duros que antes no estaban (comparación de conjuntos
+`(codigo, sesion_ids)`, no de conteos). Usa **códigos** (`D6`, `B3`), nunca ids: un id inventado por
+el modelo no puede llegar a la DB porque no resuelve.
+
+**6. Corrección del guion de demo.** `DEMO.md` paso 3 pedía "pasar parte de Inglés a D6 → aceptar →
+verde". No cierra: D4 sobran **4** sesiones y D6 tiene **3** de margen (21/24). Lo que resuelve la
+versión es generar con docentes habilitados (D4≈19, D6≈21). La IA se muestra en un conflicto de
+sesión, donde sí tiene margen. `DEMO.md` y `design/stitch/README.md` §4 quedaron corregidos.
+
+## D-023 — Pin de sesión y entrada manual de datos
+
+Cierra D-017 (el pin) y el hueco que impedía cargar un colegio sin Excel.
+
+**1. `sesion.fijada` y la regla del pin.** Migración `b7c2e1f4a9d3`:
+`sesion.fijada boolean not null default false`.
+
+`generar` calcula `fijas = [sesiones con fijada] o None`:
+
+| Situación | Qué hace el solver | Por qué |
+|---|---|---|
+| **Ninguna** sesión fijada | Trata las existentes como fijas (D-008) | Regenerar no puede destruir trabajo manual sin que nadie lo pida |
+| **Al menos una** fijada | Mueve todo lo que no está fijada | El usuario declaró qué le importa; eso convierte el solver en "trabaja conmigo" |
+
+Es la única forma de que el pin signifique algo sin romper D-008: sin pins nada cambia, y pinear es
+un acto explícito. El escenario "¿y si…?" usa la misma regla.
+
+**2. Trampa encontrada por test:** `asignar_recursos` reconstruía cada `Sesion` para ponerle el aula
+y **descartaba `fijada`**. La sesión quedaba en la franja correcta pero perdía el pin. Cualquier
+reconstrucción de `Sesion` tiene que copiar el campo.
+
+**3. Entrada manual completa.** La API tenía CRUD de cursos, docentes, recursos y asignaciones, pero
+`bloques`, `asignaturas` y `grados` eran **solo lectura**. Consecuencia: un colegio sin Excel no podía
+crear un curso (falta el grado) ni cargar sus **recreos** (falta el bloque). Se agregaron
+`POST/PATCH/DELETE` para los tres.
+
+`bloque.duracion_min` se **deriva** de `inicio`/`fin`; si el cliente la manda y no coincide responde
+400 `DURACION_INCONSISTENTE`. El Excel real ya trae esa inconsistencia como advertencia
+(`DURACION_BLOQUE_INCONSISTENTE`); por API se rechaza antes de escribir.
+
+**4. Los descansos se ven.** La grilla filtraba solo bloques `clase`, así que un recreo existía en la
+base pero no en pantalla. Ahora los bloques `descanso` y `almuerzo` se dibujan como filas
+informativas (sin celdas arrastrables): "Recreo · 09:00–09:20 · sin sesiones". El solver y el
+validador ya los respetaban (`bloques_clase`, `BLOQUE_NO_CLASE`); faltaba mostrarlos.
+
+**5. Pantalla de configuración.** La entrada manual no existía en la UI: `Cursos`, `Docentes` y
+`Recursos` eran listas de solo lectura. Se agregó `/configuracion` con formulario y tabla para las
+nueve piezas (grados, bloques, asignaturas, tipos de recurso, cursos, docentes, recursos, carga
+académica y aptitudes). Faltaban además dos endpoints sin los cuales nada de eso cerraba:
+`tipos-recurso` (un recurso necesita un tipo) y `aptitudes` (sin ellas el solver no puede repartir
+una asignatura entre dos docentes).
+
+Verificado de punta a punta con una base **vacía**: cargar grado → bloques (uno de clase y un
+recreo) → asignatura → tipo → curso → docente → recurso → asignación → aptitud → generar.
+Resultado: 4 sesiones, 0 errores y **0 sesiones en el recreo**.

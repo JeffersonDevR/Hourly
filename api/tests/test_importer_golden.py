@@ -413,3 +413,26 @@ def test_hoja_faltante_es_error_y_no_revienta() -> None:
     # Lo que sí se pudo leer sigue siendo importable.
     assert preview.conteos["cursos"] == 4
     assert preview.confirmable is True
+
+
+def test_bloque_corto_se_interpreta_como_recreo() -> None:
+    """El formato no trae `tipo`: un bloque de 20 min no puede ser una clase."""
+    from datetime import time
+
+    from app.domain.enums import TipoBloque
+    from app.importer.analisis import UMBRAL_RECREO, tipo_de_bloque
+
+    assert tipo_de_bloque(20) is TipoBloque.descanso
+    assert tipo_de_bloque(UMBRAL_RECREO) is TipoBloque.descanso
+    assert tipo_de_bloque(UMBRAL_RECREO + 1) is TipoBloque.clase
+    assert tipo_de_bloque(45) is TipoBloque.clase
+
+    libro = libro_minimo(bloques_extra=[("R1", time(13, 0), time(13, 20))])
+    preview = analizar_libro(leer_libro(libro), archivo_nombre="recreo.xlsx")
+
+    codigos = {hallazgo.codigo for hallazgo in preview.hallazgos}
+    assert "RECREO_INFERIDO" in codigos
+    assert "SIN_DESCANSOS" not in codigos
+    recreo = next(bloque for bloque in preview.bloques if bloque.codigo == "R1")
+    assert recreo.tipo is TipoBloque.descanso
+    assert recreo.duracion_min == 20

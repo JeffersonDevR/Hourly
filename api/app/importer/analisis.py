@@ -150,6 +150,16 @@ def _texto_requerido(
     return texto
 
 
+#: Una clase nunca dura 30 minutos (las del Excel real duran 60). Un bloque más corto
+#: que esto es un recreo: el formato no trae columna `tipo` para decirlo (DOMAIN.md trampa 3).
+UMBRAL_RECREO = 30
+
+
+def tipo_de_bloque(duracion_min: int) -> TipoBloque:
+    """`descanso` si el bloque es demasiado corto para una clase; `clase` si no."""
+    return TipoBloque.descanso if duracion_min <= UMBRAL_RECREO else TipoBloque.clase
+
+
 def _bloques(hoja: HojaCruda, acc: _Acumulador) -> None:
     vistos: set[str] = set()
     for fila in hoja.filas_datos:
@@ -200,7 +210,7 @@ def _bloques(hoja: HojaCruda, acc: _Acumulador) -> None:
                 inicio=inicio,
                 fin=fin,
                 duracion_min=duracion,
-                tipo=TipoBloque.clase,  # el Excel no trae `tipo` (DOMAIN.md trampa 3)
+                tipo=tipo_de_bloque(duracion),
             )
         )
 
@@ -841,6 +851,21 @@ def analizar_libro(
                 fila=fila_declaracion,
                 columna="Descripción",
             )
+
+    inferidos = [bloque for bloque in acc.bloques if bloque.tipo == TipoBloque.descanso]
+    if inferidos:
+        acc.add(
+            "RECREO_INFERIDO",
+            Gravedad.advertencia,
+            "Se interpretaron como recreo "
+            + ", ".join(
+                f"{bloque.codigo} ({bloque.inicio:%H:%M}-{bloque.fin:%H:%M})"
+                for bloque in inferidos[:6]
+            )
+            + f" por durar {UMBRAL_RECREO} min o menos. Revisalos antes de confirmar.",
+            hoja=hoja_bloques.nombre if hoja_bloques else "Bloques",
+            columna="inicio",
+        )
 
     if acc.bloques and all(bloque.tipo == TipoBloque.clase for bloque in acc.bloques):
         acc.add(

@@ -20,7 +20,7 @@ Determinista primero: reparación local greedy (mover sesión a franja libre vá
 ## Contrato de la IA
 Entrada: conflicto + sesiones afectadas + docentes/aptitudes/disponibilidad relevantes (JSON compacto, nunca el horario completo). Salida obligatoria (JSON): `{"propuestas":[{"titulo","explicacion_simple","impacto","cambios":[{"tipo":"mover_sesion|cambiar_docente|cambiar_recurso", ...}]}]}` con 2 a 3 propuestas. Tono: claro, breve, sugerente.
 Pipeline: IA → parsear → **simular cambios sobre copia → `validar()`** → descartar propuestas que introduzcan conflictos → guardar como `propuesta_resolucion` (origen `ia`) → mostrar antes/después. Si quedan 0 propuestas válidas o la IA no está disponible: devolver alerta con la causa probable de `diagnosticar_carga` ("faltan N sesiones de capacidad del docente X").
-Lenguaje natural → regla: la IA devuelve una regla estructurada editable; el usuario la revisa antes de guardar (nunca se activa sola).
+Lenguaje natural → regla: la regla estructurada (`docente`, `día`, `bloque`) vuelve editable; el usuario la revisa y `POST /reglas/confirmar` la escribe en `disponibilidad_bloqueo` con `origen=personal`. Nunca se activa sola y no necesita tabla nueva (D-004, D-022).
 
 ## Endpoints (`/api`)
 ```
@@ -41,7 +41,8 @@ POST /conflictos/{id}/propuestas  → solver primero; si falla, IA; si falla, al
 POST /propuestas/{id}/aceptar | /rechazar
 POST /horarios/{v}/deshacer | /rehacer
 POST /horarios/{v}/publicar ; GET /horarios/{v}/exportar?formato=xlsx|pdf&por=...
-POST /reglas/interpretar          → lenguaje natural → regla (IA)
+POST /reglas/interpretar          → lenguaje natural → regla (parser determinista D-004, IA si no matchea)
+POST /reglas/confirmar            → escribe la regla editada en `disponibilidad_bloqueo` (D-022)
 ```
 
 ## Pruebas golden (deben pasar siempre)

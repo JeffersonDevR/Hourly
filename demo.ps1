@@ -1,13 +1,18 @@
 # Hourly — arranque del pitch. Reemplaza al Makefile (D-015).
 #
-#   .\demo.ps1          API (:8000) + web (:5173)
+#   .\demo.ps1          resiembra el estado del pitch, API (:8000) + web (:5173)
 #   .\demo.ps1 -Dev     igual, con --reload en la API
 #   .\demo.ps1 -Check   arranca, verifica /api/estado y baja todo (autotest)
+#   .\demo.ps1 -SinSemilla  arranca con la base tal como esta (para el flujo de importar en vivo)
+#
+# Antes de levantar nada, resetea la base y siembra el estado del pitch (D-007):
+# Excel importado, 120 sesiones generadas y 2 sin colocar. Repetible: correr dos veces
+# da el mismo resultado.
 #
 # Requiere `uv` y Node 24+. pnpm no hace falta instalarlo: si no esta en PATH
 # se usa `corepack pnpm`, que viene con Node. No instala nada en el sistema.
 
-param([switch]$Dev, [switch]$Check)
+param([switch]$Dev, [switch]$Check, [switch]$SinSemilla)
 
 $ErrorActionPreference = 'Stop'
 $root = if ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
@@ -31,6 +36,12 @@ function Stop-Children {
 }
 
 try {
+    if (-not $SinSemilla) {
+        Write-Host 'Sembrando el estado del pitch...' -ForegroundColor Cyan
+        & uv run --directory api python scripts/sembrar_demo.py --reset
+        if ($LASTEXITCODE -ne 0) { throw 'El sembrado fallo: revisa la salida de arriba.' }
+    }
+
     $children += Start-Process -FilePath 'cmd.exe' -ArgumentList '/c', $apiCmd `
         -WorkingDirectory $root -PassThru -NoNewWindow
     $children += Start-Process -FilePath 'cmd.exe' -ArgumentList '/c', $webCmd `

@@ -9,13 +9,13 @@ import { cn } from "@/lib/utils";
  * El foco visible es obligatorio (tokens.css); nunca se usa `outline: none` sin reemplazo.
  */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm text-label transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm text-label transition-colors active:translate-y-px disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-mh-accent text-mh-on-accent hover:bg-mh-accent-deep",
-        outline: "border border-mh-border-control text-mh-text hover:bg-mh-raised",
-        ghost: "text-mh-secondary hover:bg-mh-raised hover:text-mh-text",
+        default: "bg-mh-accent text-mh-on-accent hover:bg-mh-accent-deep active:bg-mh-accent-deep",
+        outline: "border border-mh-border-control text-mh-text hover:bg-mh-raised active:bg-mh-sunken",
+        ghost: "text-mh-secondary hover:bg-mh-raised hover:text-mh-text active:bg-mh-sunken",
       },
       size: {
         default: "h-12 px-6",

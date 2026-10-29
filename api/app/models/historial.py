@@ -29,3 +29,7 @@ class HistorialCambioDB(TimestampMixin, Base):
     antes: Mapped[dict[str, Any] | None] = mapped_column(sa.JSON)
     despues: Mapped[dict[str, Any] | None] = mapped_column(sa.JSON)
     ocurrido_at: Mapped[datetime] = mapped_column(sa.DateTime, default=utcnow)
+    # Pila de rehacer: `deshacer` la marca, `rehacer` la devuelve a False.
+    deshecho: Mapped[bool] = mapped_column(
+        sa.Boolean, nullable=False, default=False, server_default=sa.false()
+    )

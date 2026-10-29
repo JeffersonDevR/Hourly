@@ -6,7 +6,7 @@ archivo, no es fuente de verdad.
 
 Proyecto Stitch: `3916526485862441063`
 Design system: `assets/44af003a88054ae8806013207408fd99` — *Academic Grid Matrix · Dark Accessible*
-Estado: **19 pantallas web entregadas**. Solo web, sin móvil. Piso de soporte 768px.
+Estado: **24 pantallas en el proyecto, 12 vigentes** (`list_screens`, 2026-10-29). Solo web, sin móvil. Piso de soporte 768px.
 
 > **El flujo real del producto son 6 pasos:** Importar → Auditar → Generar → Resolver →
 > Publicar → Probar. El paso 6 vuelve al 3 (bucle de escenario). Las pantallas de Cursos,
@@ -20,7 +20,7 @@ Estado: **19 pantallas web entregadas**. Solo web, sin móvil. Piso de soporte 7
 |---|---|---|
 | `design/stitch/README.md` | Este documento. Índice y estado. | ✅ canónico |
 | `design/stitch/tokens.css` | Variables CSS, mapeo a Tailwind, reglas responsive, regla global de foco | ✅ canónico |
-| Stitch (proyecto arriba) | Las 11 pantallas web + 1 responsive | ✅ canónico |
+| Stitch (proyecto arriba) | **24 pantallas reales: 12 vigentes + 12 a borrar** (§9) | ✅ canónico |
 | `AiCalendar/design/DESIGN.md` | Sistema **claro** v2 (17px no, 12px sí) | ⛔ **obsoleto** |
 | `AiCalendar/design/AUDIT.md` | Auditoría del sistema claro v1/v2 | ⛔ **obsoleto** |
 | `docs/DOMAIN.md`, `docs/ARCHITECTURE.md` | Dominio y arquitectura del producto | ✅ fuente de verdad del dominio |
@@ -54,33 +54,38 @@ ningún otro lugar de la app.
 
 Todas en modo oscuro. El identificador sirve para abrir la pantalla en Stitch.
 
-| # | Pantalla | ID | Qué resuelve | Fase |
+| # | Pantalla | ID real | Título actual en Stitch | Fase |
 |---|---|---|---|---|
-| 1 | **Inicio** | `bdaa4d284f39498d9edc4416c85bc4ab` | Estado del horario + checklist de 5 pasos | 06 |
-| 2 | **Importar** | `8d4785123bb64b4fa81f888f32d766cf` | Paso 3 de 4: revisar errores y avisos del Excel | 06 |
-| 3 | **Horario** | `d501bbe30a804ad4a4d2ff4fcf963758` | Cuadrícula semanal + panel "Por colocar" | 07 |
-| 4 | **Conflictos** | `90ca9654e58944499cc6abe5ee61541a` | Un conflicto a la vez, con propuesta del asistente | 08 |
-| 5 | **Docentes** | `f0beab2f23fe430aa0b05f590c6dad31` | Tarjetas con barra de carga y alerta de exceso | 06 |
-| 6 | **Recursos** | `ea5dbf053d774179bb979be914d6d159` | Aulas y espacios especiales | 06 |
-| 7 | **Publicar** | `fb6060ecf53b4cf48e7296786d971bd6` | Validación, versiones y exportación | 09 |
-| 8 | **Escenario ¿y si…?** | `8a45319e905746f08973bf62b7999114` | Simulación de ausencia con impacto antes de aplicar | 09 |
-| 9 | **Cursos** | `9375e2225b0549d8bbf9714bd72263d0` | Los 4 grupos con su aula titular y estado | 06 |
-| 10 | **Reglas** | `ca4c8ed5fcfb4466ba9e53f0651e3746` | Lenguaje natural → regla interpretada | 08 |
-| 11 | **Sistema de diseño** | `b2b54e839d36401999c5d6f39da2c38d` | Hoja de referencia: color, tipografía, botones, estados | — |
-| 12 | **Biblioteca de estados** | `443d5b8393ab4198aebcb7183ea8c0f6` | Vacío, cargando, error, conflicto, éxito, IA no disponible, trabajando | — |
-| 13 | **Mapa de flujo v3** | `9a4c2abbbbfb45d295b3c35cedddaab1` | Los 6 pasos reales + las pantallas de configuración | — |
-| 14 | **Identidad de marca** | `7e231b4ba3f94c2397b6f9cd18215864` | Tres propuestas de logo para "Hourly" | — |
-| 15 | **Verificación** | `62960032168347508ceabfe552fdd715` | Las 5 reglas, los bloqueos y la carga docente antes de generar | 06 |
-| 16 | **Importar · paso 1** | `2141617ca7b7471794b555df7fc146f4` | Subir el archivo | 06 |
-| 17 | **Importar · paso 2** | `aa4c64548fad4551a3d9a2d41cc16475` | Mapear hojas y columnas | 06 |
-| 18 | **Importar · paso 4** | `f1bbacb6e1b24fc8a480c2375b152381` | Confirmar la importación | 06 |
+| 1 | **Inicio** | `bdaa4d284f39498d9edc4416c85bc4ab` | `Hourly · Inicio (Proporciones de Marca Corregidas)` | 06 ✅ |
+| 2 | **Importar · paso 1** | `2141617ca7b7471794b555df7fc146f4` | `Hourly · Importar · Paso 1 Subir` | 06 ✅ |
+| 3 | **Importar · paso 2** | `aa4c64548fad4551a3d9a2d41cc16475` | `Hourly · Importar · Paso 2 Mapear` | 06 ✅ |
+| 4 | **Docentes** | `f0beab2f23fe430aa0b05f590c6dad31` | `Hourly · Docentes (Identidad de Marca Hourly.)` | 06 ✅ |
+| 5 | **Escenario ¿y si…?** | `8a45319e905746f08973bf62b7999114` | `Hourly · Escenario ¿y si…?` | 09 |
+| 6 | **Cursos** | `32c53217019847de8e33d1c21259d6b3` | `MALLA · Cursos (Tabla Corregida y Accesible)` | 06 ✅ |
+| 7 | **Recursos** | `6b842346e84f453d9728e58ac1ca992a` | `MALLA · Recursos` | 06 ✅ |
+| 8 | **Publicar** | `0ed42bb8282f465dbdaba504c3f134af` | `MALLA · Publicar el horario` | 09 |
+| 9 | **Horario** (referencia) | `7b23b749a2fa4c18a6c4689a754c36d6` | `MALLA · Horario Accesible · Adultos Mayores` | 07 |
+| 10 | **Referencia del sistema** | `e657c4e3f43e49f091f43ca0c8abdcc3` | `Hourly · Referencia del Sistema de Diseño (Logo SVG Corregido)` | — |
+| 11 | **Biblioteca de estados** | `443d5b8393ab4198aebcb7183ea8c0f6` | `Hourly · Biblioteca de estados (Especificación Técnica)` | — |
+| 12 | **Identidad de marca** | `7e231b4ba3f94c2397b6f9cd18215864` | `Hourly · Hoja de identidad de marca (3 propuestas)` | — |
 
-**Marca aplicada en las 19.** Logo elegido: concepto **C**, la H geométrica con travesaño lila y
-punto crema. En la barra lateral va en **lockup vertical** (marca arriba, "Hourly" 15px abajo) porque
-el horizontal no cabe en los 88px. En la barra superior va solo la marca a 24px junto al breadcrumb,
-nunca el wordmark: repetir "Hourly" dos veces por pantalla es ruido.
+**Corrección medida el 2026-10-29:** esta tabla antes listaba 19 pantallas y **11 de esos IDs no
+existen** en el proyecto; se habían anotado como intención, no como export. Lo que sigue sin diseño:
 
-**Responsive:** Horario tablet `3dee5ce22abb4a658c21dbdafda172f3` (1024).
+| Falta | Consecuencia |
+|---|---|
+| **Conflictos** | fase 08 se construye desde los tokens y la Biblioteca de estados, no hay mock |
+| **Reglas** | ídem |
+| **Importar · pasos 3 y 4** | la implementación los cubre con la Biblioteca de estados |
+| **Verificación**, **Mapa de flujo**, **Horario tablet** | no existen; el flujo está en §3 y en `docs/` |
+| **Horario / Publicar / Cursos / Recursos** con nombre `Hourly` | existen, pero con el nombre viejo `MALLA ·` y contenido vigente |
+
+Quedan 6 pantallas en Stitch que no son de la app (3 `DESIGN.md`, la hoja de logo suelto
+`003e3cb8d33a45eeaddabd0e5b4fc403`, la Biblioteca de estados duplicada `d542d931…` y
+`Horario Maestro · Dark Fintech Edition`). Ver §9.
+
+**Marca:** se dibuja siempre con SVG o rectángulos en línea, nunca con `<img>` ni con un `<span>`
+que simule el isotipo. En la implementación: `web/src/components/layout/Marca.tsx`.
 
 ### Navegación
 
@@ -106,7 +111,9 @@ No inventar otras cifras: la demo se rompe cuando los números no cuadran entre 
 - **6 docentes**: Marta Ruiz (24/24), Ana Restrepo (24/24), **Carlos Mendoza 28/24 — exceso**,
   Jorge Salazar (21/24), Luisa Ortiz (19/24), **Diego Herrera 16/24 — cupo libre**.
 - **Conflicto principal**: Carlos Mendoza demanda 28 clases (Inglés 16 + Ed. Física 12) contra
-  un máximo de 24. La propuesta del asistente pasa una sesión de Inglés a Diego Herrera.
+  un máximo de 24. **La aritmética no cierra moviendo una sesión**: sobran 4 y Diego Herrera solo
+  tiene 3 de margen (21 de 24). Lo que resuelve la versión es generar con docentes habilitados
+  (el solver reparte Inglés: D4≈19, D6≈21). Ver `docs/DEMO.md` paso 3.
 - **Conflicto secundario**: Aula 7B admite 24 estudiantes y el grupo tiene 30.
 - **Escenario**: "D2 sin clase el martes" — 16 sesiones afectadas, 4 por reubicar.
 
@@ -125,28 +132,28 @@ No inventar otras cifras: la demo se rompe cuando los números no cuadran entre 
 
 ---
 
-## 6. Defectos abiertos
+## 6. Defectos abiertos (medidos en el HTML, no de memoria)
 
-| Pantalla | Qué pasa | Dónde se arregla |
-|---|---|---|
-| Inicio | La línea de pie queda bajo el pliegue en el export de 1024px | El contenido hace scroll en la app real. No es defecto de diseño. |
-| Docentes | Sin `:focus-visible` horneado en el CSS del mock | Regla global de `tokens.css` |
-| Sistema de diseño | La celda "Propuesta" sigue con dos textos superpuestos | Rehacer esa celda a mano; es un espécimen |
-| Sistema de diseño | Quedan 3 `outline-none` | `tokens.css` |
-| Reglas | 3 de 24 iconos SVG sin `aria-hidden` | Marcar a mano |
-| Horario tablet | `overflow-x: hidden` en un contenedor | Sustituir por `.mh-scroll-y` |
-| Importar, Publicar, Recursos, Escenario | Sin `aria-live` en contadores y estados | Añadir en implementación |
-| Mapa de flujo v3 | Las cuatro tarjetas de configuración truncan su descripción ("4 grupos y s…", "El estado de …") | Acortar el texto o ampliar la tarjeta |
-| Mapa de flujo v3 | Las etiquetas de eyebrow están a 13px, bajo el piso de 14px | Subir a 14px |
-| Verificación | El chip "Exceso" de Carlos Mendoza se pega al número "28 de 24" | Darle su propia línea o quitar el chip, que ya está la barra |
-| Verificación | 5 `outline-none` y un texto a 13px | Regla global de foco en `tokens.css` |
-| Importar · paso 2 | Solo 1 de 39 iconos SVG tiene `aria-hidden` | Marcar los decorativos |
+Medición del 2026-10-29 descargando el HTML de las 12 vigentes y buscando las cinco reglas de §2
+más los dos parches prohibidos. Reemplaza la tabla anterior, que citaba defectos de pantallas que
+ya no existen.
 
-La **Biblioteca de estados** quedó limpia: cero texto bajo 14px, ortografía corregida, y los siete
-estados completos. Es la referencia que debe cumplir la implementación.
+| Defecto | Dónde | Medido | Arreglo |
+|---|---|---|---|
+| `overflow-x: hidden` | **7 de 12**: Importar 1 y 2, Escenario, Cursos, Publicar, Horario accesible y Horario interactivo | regla de §2 lo prohíbe | En la implementación: scroll en el contenedor (`.mh-scroll-x`). En los mocks solo se arregla regenerando |
+| Texto a 13px | **Horario interactivo** (7 casos) y **Biblioteca de estados** (1) | piso de 14px | Los otros 10 están en 14px o más |
+| `outline: none` | **Publicar** (1) | el resto en 0 | La regla global de `tokens.css` ya cubre la implementación |
+| SVG sin `aria-hidden` | **Importar 2** (38 de 39) y **Biblioteca de estados** (8 de 8) | decorativos sin marcar | Marcar al implementar |
+| Sin `aria-live` | Importar 1 y 2, Docentes, Cursos, Recursos, Publicar, Escenario, Referencia, Biblioteca | solo Inicio y los dos Horarios lo tienen | Añadir en implementación |
+| `<title>` dice `MALLA` | **9 de 12** | cosmético, invisible | Una línea por ruta; en `web/index.html` ya dice `Hourly` |
+| Isotipo con `<span>` | **Importar 2** | no es el logo | **Resuelto en la implementación** (`Marca.tsx`). En los mocks: regenerar |
 
-**Los anillos de foco y los `aria-live` no se pueden verificar en un mock estático.** La fuente
-de verdad para esos dos es `tokens.css`, no la imagen de Stitch.
+Lo que **sí** cumplen las 12: cero fuentes por debajo del piso donde se pudo medir (salvo las dos
+citadas), y la paleta coincide exactamente con `tokens.css` (`#08080A`, `#0F1012`, `#23252A`,
+`#2A2C31`, `#F7F7F5`, `#C9C9CE`, `#A8A8AD`, `#C4B5FD`, `#FF9C93`).
+
+**Los anillos de foco y los `aria-live` no se pueden verificar en un mock estático.** La fuente de
+verdad para esos dos es `tokens.css`, no la imagen de Stitch.
 
 ---
 
@@ -169,7 +176,7 @@ de verdad para esos dos es `tokens.css`, no la imagen de Stitch.
 | # | Paso | Estado | Desbloquea |
 |---|---|---|---|
 | 1 | **Verificación** (compuerta antes de generar) | ✅ hecho | fase 07 |
-| 2 | **Importar: pasos 1, 2 y 4** | ✅ hecho | fases 02 y 06 |
+| 2 | **Importar: pasos 1 y 2** | ✅ hecho (3 y 4 no tienen mock) | fases 02 y 06 |
 | 3 | **Logo "Hourly"** en todas las pantallas | ✅ hecho | identidad de producto |
 | 4 | **Historial de cambios** | **entra al MVP** | fase 09 (D-017) |
 | 5 | **Enlaces de consulta** (solo lectura, sin login) | **fuera de alcance** (D-012, D-017) | nada |
@@ -187,98 +194,154 @@ de verdad para esos dos es `tokens.css`, no la imagen de Stitch.
 Reordenar y borrar es trabajo manual en la UI de Stitch. Lo que sigue es el manifiesto para
 hacerlo rápido.
 
-### Las 19 que se quedan
+### Las 12 que se quedan
 
-| # | Pantalla | ID |
+Verificado con `list_screens` el 2026-10-29: el proyecto tiene **24 pantallas**, no 19.
+
+| # | ID | Título actual | Nombre objetivo |
+|---|---|---|---|
+| 1 | `bdaa4d284f39498d9edc4416c85bc4ab` | Hourly · Inicio (Proporciones de Marca Corregidas) | `Hourly · Inicio` |
+| 2 | `2141617ca7b7471794b555df7fc146f4` | Hourly · Importar · Paso 1 Subir | `Hourly · Importar 1 Subir` |
+| 3 | `aa4c64548fad4551a3d9a2d41cc16475` | Hourly · Importar · Paso 2 Mapear | `Hourly · Importar 2 Mapear` |
+| 4 | `f0beab2f23fe430aa0b05f590c6dad31` | Hourly · Docentes (Identidad de Marca Hourly.) | `Hourly · Docentes` |
+| 5 | `8a45319e905746f08973bf62b7999114` | Hourly · Escenario ¿y si…? | `Hourly · Escenario` |
+| 6 | `32c53217019847de8e33d1c21259d6b3` | MALLA · Cursos (Tabla Corregida y Accesible) | `Hourly · Cursos` |
+| 7 | `6b842346e84f453d9728e58ac1ca992a` | MALLA · Recursos | `Hourly · Recursos` |
+| 8 | `0ed42bb8282f465dbdaba504c3f134af` | MALLA · Publicar el horario | `Hourly · Publicar` |
+| 9 | `7b23b749a2fa4c18a6c4689a754c36d6` | MALLA · Horario Accesible · Adultos Mayores | `Hourly · Horario` |
+| 10 | `e657c4e3f43e49f091f43ca0c8abdcc3` | Hourly · Referencia del Sistema de Diseño (Logo SVG Corregido) | `Hourly · Sistema de diseño` |
+| 11 | `443d5b8393ab4198aebcb7183ea8c0f6` | Hourly · Biblioteca de estados (Especificación Técnica) | `Hourly · Biblioteca de estados` |
+| 12 | `7e231b4ba3f94c2397b6f9cd18215864` | Hourly · Hoja de identidad de marca (3 propuestas) | `Hourly · Identidad de marca` |
+
+### Las 12 que se borran
+
+| ID | Título | Por qué |
 |---|---|---|
-| 1 | Inicio | `bdaa4d284f39498d9edc4416c85bc4ab` |
-| 2 | Importar | `8d4785123bb64b4fa81f888f32d766cf` |
-| 3 | Horario | `d501bbe30a804ad4a4d2ff4fcf963758` |
-| 4 | Conflictos | `90ca9654e58944499cc6abe5ee61541a` |
-| 5 | Docentes | `f0beab2f23fe430aa0b05f590c6dad31` |
-| 6 | Recursos | `ea5dbf053d774179bb979be914d6d159` |
-| 7 | Publicar | `fb6060ecf53b4cf48e7296786d971bd6` |
-| 8 | Escenario ¿y si…? | `8a45319e905746f08973bf62b7999114` |
-| 9 | Cursos | `9375e2225b0549d8bbf9714bd72263d0` |
-| 10 | Reglas | `ca4c8ed5fcfb4466ba9e53f0651e3746` |
-| 11 | Sistema de diseño | `b2b54e839d36401999c5d6f39da2c38d` |
-| 12 | Biblioteca de estados | `443d5b8393ab4198aebcb7183ea8c0f6` |
-| 13 | Mapa de flujo v3 | `9a4c2abbbbfb45d295b3c35cedddaab1` |
-| 14 | Identidad de marca | `7e231b4ba3f94c2397b6f9cd18215864` |
-| 15 | Horario tablet 1024 | `3f9536c0aac04f8fa2090a452e3490b1` |
-| 16 | Verificación | `62960032168347508ceabfe552fdd715` |
-| 17 | Importar · paso 1 Subir | `2141617ca7b7471794b555df7fc146f4` |
-| 18 | Importar · paso 2 Mapear | `aa4c64548fad4551a3d9a2d41cc16475` |
-| 19 | Importar · paso 4 Confirmar | `f1bbacb6e1b24fc8a480c2375b152381` |
+| `0bdc6a7fa4494bd1bea4b9c3d02a70a0` | Hourly · Inicio (Identidad Concepto C) | versión anterior de Inicio |
+| `66cabaaeb6a84374a5e95dea8687935d` | MALLA · Cursos | duplicado sin la corrección de tabla |
+| `57906a9ad1cb48d1a49c8fc105ac47d8` | MALLA · Horario Accesible Interactivo y Animado | segunda variante de Horario; además rompe el piso de 14px |
+| `b6587b6aacbb4de88666628b1eea424e` | MALLA · Referencia del Sistema de Diseño | reemplazada por la de logo SVG corregido |
+| `d542d93107ce4c18b71104514f540f78` | Hourly · Biblioteca de estados (Marca Hourly.) | duplicado de la Especificación Técnica |
+| `003e3cb8d33a45eeaddabd0e5b4fc403` | Hourly Logo - Opción C | la marca elegida ya vive en Identidad de marca |
+| `db508de1d89e4df68a5077b489b23761` | Hourly · Enlaces de consulta | **fuera de alcance** (D-012): no se implementa |
+| `8c8608d453884135b37a2942fa9e5281` | Horario Maestro · Dark Fintech Edition | exploración previa, no es el sistema vigente |
+| `19e5b4731d6e49b5a30b29dae1927913` | DUPLICADO · Entrada de datos (sistema claro v1) | sistema claro descartado |
+| `530309100493758765` | DESIGN.md | documento subido, no es una pantalla |
+| `4971119891102610473` | DESIGN.md | ídem |
+| `8928937375730533779` | DESIGN.md | ídem |
 
-### Cómo ordenarlas en el canvas
+**Regla:** si el ID no está en la tabla de las 12, se borra. `list_screens` hoy devuelve 24
+títulos coherentes con el canvas (la versión anterior de este README decía 21 y no cuadraba).
 
-Dos filas: **fila 1** las pantallas de la app (1 a 10 + 15), **fila 2** las hojas técnicas (11 a 14).
+### Renombrar y editar: solo desde la UI de Stitch
 
-### Todo lo demás es duplicado y se borra
+Probado el 2026-10-29 con `edit_screens` sobre Inicio, dos veces (prompt en prosa y reemplazo
+HTML literal con `FIND`/`REPLACE`): **no escribe nada**. Devuelve un texto diciendo que aplicó el
+cambio, y el HTML de la pantalla queda idéntico byte por byte, sin pantalla nueva y sin crecer el
+canvas. Es una herramienta de chat que reporta éxito falso.
 
-- `Entrada de Datos Curriculares` (las dos versiones claras)
-- Las tres tarjetas sueltas `DESIGN.md`
-- Las 9 pantallas del sistema claro anterior
-- `Horario Maestro · Dark Fintech Edition` y `Variante Azul Institucional`
-- Toda pantalla cuyo título empiece con `MALLA ·` que no esté en la tabla de arriba
-- Las versiones intermedias de Inicio, Docentes, Conflictos, Sistema, Cursos, Reglas,
-  Biblioteca de estados y Mapa de flujo
-- Las 2 pantallas móviles descartadas
-
-**Regla para identificarlas:** si el ID no está en la tabla de las 19, se borra.
-
-> `list_screens` es inconsistente: reporta 21 títulos cuando el canvas tiene más. Guiarse por el
-> título y el contenido visual, no por ese conteo.
-
-### Renombrar: solo desde la UI de Stitch
-
-Probado: **no existe herramienta MCP para renombrar**. `edit_screens` no edita el título en el
-lugar — crea una pantalla nueva, o sea un duplicado más. Renombrar es hacer doble clic en el
-título dentro de Stitch y escribir.
+Consecuencias: por MCP no se puede renombrar, reordenar, borrar una pantalla ni editar su markup.
+Lo único que escribe es `generate_screen_from_text` (crea pantallas nuevas) y
+`apply_design_system` (solo colores y tipografía). Renombrar y borrar es doble clic en Stitch.
 
 Convención para que el canvas se lea de un vistazo:
 
 | Prefijo | Significado |
 |---|---|
-| `Hourly · {Pantalla}` | **Se usa.** Es una de las 19. |
+| `Hourly · {Pantalla}` | **Se usa.** Es una de las 12. |
 | `DUPLICADO · {descripción}` | **Se borra.** Versión vieja, intermedia o de otro sistema. |
-
-### Nombres objetivo de las 19 que se quedan
-
-| ID | Nombre a ponerle |
-|---|---|
-| `bdaa4d284f39498d9edc4416c85bc4ab` | `Hourly · Inicio` |
-| `8d4785123bb64b4fa81f888f32d766cf` | `Hourly · Importar` |
-| `d501bbe30a804ad4a4d2ff4fcf963758` | `Hourly · Horario` |
-| `90ca9654e58944499cc6abe5ee61541a` | `Hourly · Conflictos` |
-| `f0beab2f23fe430aa0b05f590c6dad31` | `Hourly · Docentes` |
-| `ea5dbf053d774179bb979be914d6d159` | `Hourly · Recursos` |
-| `fb6060ecf53b4cf48e7296786d971bd6` | `Hourly · Publicar` |
-| `8a45319e905746f08973bf62b7999114` | `Hourly · Escenario` |
-| `9375e2225b0549d8bbf9714bd72263d0` | `Hourly · Cursos` |
-| `ca4c8ed5fcfb4466ba9e53f0651e3746` | `Hourly · Reglas` |
-| `b2b54e839d36401999c5d6f39da2c38d` | `Hourly · Sistema de diseño` |
-| `443d5b8393ab4198aebcb7183ea8c0f6` | `Hourly · Biblioteca de estados` |
-| `9a4c2abbbbfb45d295b3c35cedddaab1` | `Hourly · Mapa de flujo` |
-| `7e231b4ba3f94c2397b6f9cd18215864` | `Hourly · Identidad de marca` |
-| `3f9536c0aac04f8fa2090a452e3490b1` | `Hourly · Horario tablet 1024` |
-| `62960032168347508ceabfe552fdd715` | `Hourly · Verificación` |
-| `2141617ca7b7471794b555df7fc146f4` | `Hourly · Importar 1 Subir` |
-| `aa4c64548fad4551a3d9a2d41cc16475` | `Hourly · Importar 2 Mapear` |
-| `f1bbacb6e1b24fc8a480c2375b152381` | `Hourly · Importar 4 Confirmar` |
-
-Al resto **no hace falta renombrarlo si lo vas a borrar**: sería trabajo doble. Renombrá solo
-las 19. Si preferís no borrar nada todavía, entonces sí poné `DUPLICADO · ` delante de todo lo
-demás para que el canvas se lea, pero el objetivo final es borrarlas.
 
 ### Estado de la marca en las pantallas
 
-Las 19 llevan la marca. **Lección para la implementación: la marca se dibuja siempre con SVG o
-rectángulos en línea, nunca con una etiqueta `<img>`.** En Sistema de diseño y Biblioteca de
-estados el modelo la intentó con una imagen externa y quedó un icono de imagen rota. Se corrigieron
-regenerando las dos.
+Medido: **la marca es SVG en línea en 11 de las 12**; solo `Importar · Paso 2` sigue con un `<span>`
+que simula el isotipo. El arreglo vive en la implementación (`Marca.tsx`); los mocks se corrigen
+regenerando.
 
-Falta un solo arreglo de contenido: el pie del **Mapa de flujo** todavía dice "MALLA · Arquitectura
-de información v3". Las otras 18 solo llevan "MALLA" en el `<title>` del HTML, que es invisible y
-se resuelve en una línea por ruta al implementar.
+Nunca `<img>`: en Sistema de diseño y Biblioteca de estados el modelo la intentó con una imagen
+externa y quedó un icono de imagen rota.
+
+## 10. Estado de la implementación (`web/`)
+
+Registro de qué del diseño ya está en código. La fuente sigue siendo `tokens.css`; esto solo dice
+dónde se aplicó y qué se desvió a propósito.
+
+### Aplicado en la fase 6
+
+| Pieza del diseño | Dónde vive | Nota |
+|---|---|---|
+| Tokens (color, tipografía, radios, foco global) | `web/tailwind.config.ts` + `web/src/index.css` importa `tokens.css` | Mapeo 1:1, dark-only |
+| Marca concepto C | `web/src/components/layout/Marca.tsx` | Geometría de `logo-opcion-c.svg`, verticales en `currentColor` + lila + crema |
+| Barra lateral de 88px con lockup vertical | `web/src/components/layout/Sidebar.tsx` | Usa `w-[var(--mh-rail-width)]`; 72px por debajo de 1280 lo resuelve el token |
+| Barra superior: marca 24px + breadcrumb | `web/src/components/layout/TopBar.tsx` | Nunca el wordmark arriba |
+| Semáforo, contador de conflictos, escenario | `TopBar` | Escenario en **solo lectura**: no hay endpoint para cambiar el de una versión existente (fase 9) |
+| Inicio: semáforo + resumen + checklist de 4 pasos | `web/src/pages/Inicio.tsx` | El diseño pedía 5; el 5.º era "Probar escenario", que es fase 9 |
+| Importar: 4 pasos con corrección en línea | `web/src/pages/Importar.tsx` | Pasos 1, 2, 3 y 4 en una sola ruta con estado |
+| Cursos | `web/src/pages/Cursos.tsx` | Sin panel "Resumen" (decisión §7) |
+| Docentes: tarjetas con barra de carga y exceso | `web/src/pages/Docentes.tsx` | La barra compara sesiones colocadas contra `max_sesiones_semana` |
+| Recursos agrupados por tipo | `web/src/pages/Recursos.tsx` | Aula titular visible, el resto "Compartido" |
+| Estados vacío / cargando / error / sin permiso de color | `web/src/components/estados.tsx` | Icono + palabra siempre; `role="status"` y `role="alert"` |
+
+### Desviaciones documentadas
+
+1. **Cursos, Reglas, Escenario y Ajustes siguen en la barra lateral**, en un grupo "Configuración" más chico. El
+   diseño dice que son secundarias y se llegan desde Inicio y Conflictos, pero `/reglas` no tendría
+   ningún camino hasta la fase 8. Cuando exista el enlace desde Conflictos, se sacan del rail. La etiqueta de navegación de `/configuracion` es **"Ajustes"** (13 caracteres no entran en el rail sin envolver; el título de la pantalla sigue siendo "Configuración").
+2. **Checklist de Inicio con 4 pasos, no 5.** "Probar el escenario" depende del solver de escenarios
+   (fase 9); mostrarlo ahora sería un paso que no lleva a ningún lado.
+3. **Sin chip de "guardado".** Cada mutación es una request que commitea o falla; el estado de la
+   versión (`borrador` / `publicado`) ya lo comunica. Un indicador de guardado global necesitaría
+   estado compartido que hoy no existe.
+4. ~~Ancho de la barra lateral sin verificar.~~ **Verificado y corregido dos veces.** A 88px
+   "Configuración" no entra: envolverla con `overflow-wrap: anywhere` partía la palabra por la mitad
+   ("Configu-ración"), que es peor que cortarla. El rail subió a **120px** (≥1280) y **100px** (≤1279)
+   en `tokens.css`; así la etiqueta más larga entra entera a 14px. Por debajo, `hyphens: auto` (el
+   documento ya está en `lang="es"`) hace un corte ortográfico, no arbitrario.
+   El shell pasó a alto fijo con scroll solo en el `main`, que era el otro síntoma ("el scroll solo
+   funciona en ciertas áreas").
+   **De paso:** la escala tipográfica responsive de §5 (17px→16px, h1 32px→28px bajo 1280) existía en
+   `tokens.css` como shorthand `--mh-body`/`--mh-h1` que Tailwind no podía consumir. Ahora son
+   `--mh-size-body` y `--mh-size-h1`, usadas por `tailwind.config.ts`. Era la causa del "se ve
+   regrande" en pantallas chicas.
+5. ~~Pendiente del §5~~ **Implementado:** por debajo de 1024px la cuadrícula muestra **un día a la
+   vez** con selector de día, y por debajo de 768 aparece un **aviso de tamaño** en vez de un layout
+   comprimido. Ver `useMediaQuery` en `web/src/lib/media.ts`.
+
+**Nota de mantenimiento:** los breakpoints del diseño ahora viven en dos lugares que tienen que
+moverse juntos — `tokens.css` (media queries) y `web/src/lib/media.ts` (las mismas consultas en JS
+para lo que no se puede resolver con CSS, como dejar de renderizar columnas).
+
+---
+
+## 11. Deriva entre Stitch y `tokens.css` (medida)
+
+Tres inconsistencias reales del proyecto en Stitch, verificadas vía MCP el 2026-10-29. Las tres
+importan porque cualquier pantalla nueva que se genere hereda la primera.
+
+**1. El design system por defecto del proyecto es CLARO.**
+`list_projects` devuelve `colorMode: LIGHT` para `3916526485862441063`. Las pantallas son oscuras,
+pero el default no. El oscuro es un asset aparte y hay que aplicarlo explícitamente:
+
+| Asset | Modo | Surface | Tertiary |
+|---|---|---|---|
+| `assets/132518d6ea404090a6b99af84dcf4973` | LIGHT | `#FFFFFF` | `#4F46E5` |
+| **`assets/44af003a88054ae8806013207408fd99`** | **DARK** | **`#191A1D`** | **`#5EEAD4`** |
+| `assets/b7b90aed8ada46fc9596a9728c01c9e7` | LIGHT | `#FBF9F9` | `#000000` |
+
+**2. El design system oscuro no coincide con nuestro acento.** Su `tertiary` es `#5EEAD4` (turquesa)
+y su surface `#191A1D` sí coincide con `--mh-surface`. Nosotros usamos **lila `#C4B5FD`** como
+acento y **reservamos el turquesa para la IA** (§2 y §7). Consecuencia concreta: **aplicar
+`apply_design_system` sobre una pantalla existente repinta el acento de lila a turquesa** y rompe la
+regla de que el turquesa solo significa "esto lo propuso el asistente". No se aplica nunca sobre una
+pantalla que ya está bien.
+
+**3. `tokens.css` es el único contrato de color.** El HTML de las 12 vigentes coincide exactamente
+con sus valores; el design system de Stitch no. Si hay que elegir, gana `tokens.css`.
+
+### Cómo generar una pantalla nueva sin repetir los defectos
+
+1. `generate_screen_from_text` con el prompt que incluya, textual: *fondo `#08080A`, superficie
+   `#191A1D`, acento lila `#C4B5FD`, turquesa `#5EEAD4` solo para propuestas de IA, texto 17px
+   mínimo 14px, objetivos 44px, `outline` visible, `overflow-x` nunca en `hidden`*.
+2. **No** correr `apply_design_system` después: pisa el acento (punto 2).
+3. Medir el HTML con el mismo método de §6 antes de aceptarla: `text-[13px]`, `outline: none`,
+   `overflow-x: hidden`, `aria-hidden` en los SVG decorativos.

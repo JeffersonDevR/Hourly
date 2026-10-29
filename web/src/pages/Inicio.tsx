@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Circle, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
+import { Aviso, Cargando, ErrorConsulta } from "@/components/estados";
 import {
   Card,
   CardContent,
@@ -8,14 +10,123 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { clavesConsulta, obtenerEstado } from "@/lib/api";
+import {
+  clavesConsulta,
+  listarAsignaciones,
+  listarConflictos,
+  listarCursos,
+  listarDocentes,
+  listarRecursos,
+  listarVersiones,
+  vistaHorario,
+} from "@/lib/api";
+import { versionMasReciente } from "@/lib/version";
 
-/** Inicio. En la fase 0 solo prueba el cableado web → API; el checklist llega en la fase 6. */
+type Paso = { titulo: string; detalle: string; listo: boolean; ruta: string };
+
+function Checklist({ pasos }: { pasos: Paso[] }) {
+  return (
+    <ol className="flex flex-col gap-2">
+      {pasos.map((paso) => (
+        <li
+          key={paso.titulo}
+          className="flex items-start gap-3 rounded-cell border border-mh-border px-4 py-3"
+        >
+          {paso.listo ? (
+            <CheckCircle2 aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-mh-success" />
+          ) : (
+            <Circle aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-mh-muted" />
+          )}
+          <div className="flex-1">
+            <p className="text-label text-mh-text">
+              {paso.titulo}
+              <span className="sr-only">{paso.listo ? " (completo)" : " (pendiente)"}</span>
+            </p>
+            <p className="text-body-sm text-mh-secondary">{paso.detalle}</p>
+          </div>
+          <Link
+            to={paso.ruta}
+            className="min-h-[44px] self-center rounded-sm border border-mh-border-control px-4 py-2 text-label-xs text-mh-text hover:bg-mh-raised"
+          >
+            Ir
+          </Link>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 export function Inicio() {
-  const estado = useQuery({
-    queryKey: clavesConsulta.estado,
-    queryFn: obtenerEstado,
+  const cursos = useQuery({ queryKey: clavesConsulta.cursos, queryFn: listarCursos });
+  const docentes = useQuery({ queryKey: clavesConsulta.docentes, queryFn: listarDocentes });
+  const recursos = useQuery({ queryKey: clavesConsulta.recursos, queryFn: listarRecursos });
+  const asignaciones = useQuery({
+    queryKey: clavesConsulta.asignaciones,
+    queryFn: listarAsignaciones,
   });
+  const versiones = useQuery({ queryKey: clavesConsulta.versiones, queryFn: listarVersiones });
+
+  const version = versiones.data ? versionMasReciente(versiones.data) : undefined;
+  const sesiones = useQuery({
+    queryKey: clavesConsulta.sesiones(version?.id ?? "sin-version"),
+    queryFn: () => vistaHorario(version!.id),
+    enabled: Boolean(version),
+  });
+  const conflictos = useQuery({
+    queryKey: clavesConsulta.conflictos(version?.id ?? "sin-version"),
+    queryFn: () => listarConflictos(version!.id),
+    enabled: Boolean(version),
+  });
+
+  const consultas = [cursos, docentes, recursos, asignaciones, versiones, sesiones, conflictos];
+  // `isPending` incluye las consultas deshabilitadas (sin versión): `isLoading` no.
+  const cargando = consultas.some((consulta) => consulta.isLoading);
+  const fallida = consultas.find((consulta) => consulta.isError);
+
+  const totalSesiones = sesiones.data?.sesiones.length ?? 0;
+  const errores = (conflictos.data?.conflictos ?? []).filter(
+    (conflicto) => conflicto.gravedad === "error",
+  ).length;
+  const advertencias = (conflictos.data?.conflictos.length ?? 0) - errores;
+
+  const pasos: Paso[] = [
+    {
+      titulo: "1. Importar el Excel",
+      detalle:
+        (cursos.data?.length ?? 0) > 0
+          ? `${cursos.data?.length} cursos y ${docentes.data?.length} docentes cargados.`
+          : "Subí el archivo de la escuela: trae cursos, docentes, carga y salones.",
+      listo: (cursos.data?.length ?? 0) > 0 && (docentes.data?.length ?? 0) > 0,
+      ruta: "/importar",
+    },
+    {
+      titulo: "2. Revisar la carga académica",
+      detalle:
+        (asignaciones.data?.length ?? 0) > 0
+          ? `${asignaciones.data?.length} asignaciones y ${recursos.data?.length} recursos.`
+          : "Cada curso necesita sus asignaturas, docente principal y salón.",
+      listo: (asignaciones.data?.length ?? 0) > 0,
+      ruta: "/cursos",
+    },
+    {
+      titulo: "3. Generar el horario",
+      detalle:
+        totalSesiones > 0
+          ? `${totalSesiones} sesiones colocadas en la versión ${version?.numero}.`
+          : "El solver arma la semana sin solapamientos.",
+      listo: totalSesiones > 0,
+      ruta: "/horario",
+    },
+    {
+      titulo: "4. Publicar",
+      detalle:
+        version?.estado === "publicado"
+          ? "La versión está publicada."
+          : "Se publica cuando no quedan errores.",
+      listo: version?.estado === "publicado",
+      ruta: "/publicacion",
+    },
+  ];
 
   return (
     <section aria-labelledby="titulo-pantalla" className="flex flex-col gap-6">
@@ -29,51 +140,90 @@ export function Inicio() {
         </p>
       </div>
 
-      <Card className="max-w-[520px]">
-        <CardHeader>
-          <CardTitle>Estado del sistema</CardTitle>
-          <CardDescription>
-            Respuesta de <code className="text-mh-text">GET /api/estado</code>.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {estado.isPending ? (
-            <p className="flex items-center gap-2 text-body-sm text-mh-secondary">
-              <Loader2 aria-hidden="true" className="size-4 animate-spin" />
-              Consultando la API…
-            </p>
-          ) : null}
+      {cargando ? <Cargando que="el estado del horario" /> : null}
+      {fallida ? (
+        <ErrorConsulta error={fallida.error} onReintentar={() => void fallida.refetch()} />
+      ) : null}
 
-          {estado.isError ? (
-            <p className="flex items-center gap-2 text-body-sm text-mh-danger">
-              <AlertTriangle aria-hidden="true" className="size-4" />
-              No se pudo consultar la API. Revisá que el backend esté corriendo en el puerto 8000.
-            </p>
-          ) : null}
+      {!cargando && !fallida ? (
+        <>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Semáforo del horario</CardTitle>
+                <CardDescription>
+                  {version
+                    ? `Versión ${version.numero} · ${version.estado}`
+                    : "Todavía no hay una versión de horario."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {!version ? (
+                  <Aviso tono="info">Creá una versión desde Horario después de importar.</Aviso>
+                ) : errores > 0 ? (
+                  <Aviso tono="error">
+                    {errores} conflictos que impiden publicar.{" "}
+                    <Link className="underline" to="/conflictos">
+                      Ver conflictos
+                    </Link>
+                  </Aviso>
+                ) : advertencias > 0 ? (
+                  <Aviso tono="advertencia">
+                    {advertencias} advertencias, ninguna bloqueante.{" "}
+                    <Link className="underline" to="/conflictos">
+                      Revisarlas
+                    </Link>
+                  </Aviso>
+                ) : (
+                  <Aviso tono="ok">
+                    Sin conflictos:{" "}
+                    {totalSesiones > 0
+                      ? "el horario se puede publicar."
+                      : "falta generar el horario."}
+                  </Aviso>
+                )}
+              </CardContent>
+            </Card>
 
-          {estado.data ? (
-            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-body-sm">
-              <dt className="text-mh-muted">API</dt>
-              <dd className="flex items-center gap-2 text-mh-success">
-                <CheckCircle2 aria-hidden="true" className="size-4" />
-                Conectada
-              </dd>
-              <dt className="text-mh-muted">Asistente IA</dt>
-              <dd className="flex items-center gap-2 text-mh-secondary">
-                <AlertTriangle aria-hidden="true" className="size-4" />
-                {estado.data.ai_disponible ? "Disponible" : "No disponible"}
-              </dd>
-            </dl>
-          ) : null}
-
-          <div
-            role="status"
-            className="mt-5 flex items-center gap-2 rounded-sm border border-mh-border px-3 py-2 text-label-xs text-mh-muted"
-          >
-            El checklist de configuración y el resumen llegan en la fase 6.
+            <Card>
+              <CardHeader>
+                <CardTitle>Resumen</CardTitle>
+                <CardDescription>Lo que hay cargado hoy.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <dl className="grid grid-cols-2 gap-4 text-body-sm">
+                  {[
+                    ["Cursos", cursos.data?.length ?? 0],
+                    ["Docentes", docentes.data?.length ?? 0],
+                    ["Recursos", recursos.data?.length ?? 0],
+                    ["Asignaciones", asignaciones.data?.length ?? 0],
+                  ].map(([etiqueta, valor]) => (
+                    <div key={String(etiqueta)}>
+                      <dt className="text-mh-muted">{etiqueta}</dt>
+                      <dd className="text-h3 text-mh-text">{valor}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Configuración</CardTitle>
+              <CardDescription>Los cuatro pasos para tener un horario publicado.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Checklist pasos={pasos} />
+            </CardContent>
+          </Card>
+
+          <p className="flex items-center gap-2 text-label-xs text-mh-muted">
+            <Loader2 aria-hidden="true" className="size-3.5" />
+            La grilla interactiva llega en la fase 7 y las propuestas de IA en la fase 8.
+          </p>
+        </>
+      ) : null}
     </section>
   );
 }

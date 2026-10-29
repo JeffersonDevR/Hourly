@@ -129,6 +129,7 @@ def libro_minimo(
     curso_malo: bool = False,
     forzar_floats: bool = True,
     sin_hoja: str | None = None,
+    bloques_extra: list[tuple[str, object, object]] | None = None,
 ) -> bytes:
     """Libro completo y coherente con el formato del importador.
 
@@ -144,7 +145,7 @@ def libro_minimo(
     hojas["Leeme"].append(["Caso", "Datos sintéticos para los tests del importador"])
     hojas["Leeme"].append(["Unidad", "Cada bloque es de 50 minutos"])
 
-    for codigo, inicio, fin in BLOQUES:
+    for codigo, inicio, fin in [*BLOQUES, *(bloques_extra or [])]:
         hojas["Bloques"].append([codigo, inicio, fin])
 
     for codigo, estudiantes in CURSOS:

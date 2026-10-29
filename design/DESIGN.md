@@ -1,3 +1,9 @@
+> ⛔ **OBSOLETO como contrato de implementación.** Este documento describe el sistema
+> **claro** v2 (canvas #F8FAFC) y el producto quedó en modo oscuro único. Los tokens
+> vigentes son `design/stitch/tokens.css` y el contrato de diseño es
+> `design/stitch/README.md`. Se conserva por la parte de reglas (17px / 44px / AAA),
+> que sigue vigente y está repetida allí.
+
 ---
 name: Academic Grid Matrix v2
 product: MALLA · Horarios institucionales
