@@ -23,6 +23,7 @@ NO_BLOQUEANTES: frozenset[str] = frozenset(
     {
         "DURACION_BLOQUE_INCONSISTENTE",
         "SIN_DESCANSOS",
+        "RECREO_INFERIDO",
         "FILAS_VACIAS_IGNORADAS",
         "DOCENTE_SOBRECARGA",
         "CURSO_SIN_ESTUDIANTES",

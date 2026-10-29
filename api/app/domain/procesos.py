@@ -63,6 +63,7 @@ class HistorialCambio:
     despues: dict[str, Any] | None = None
     horario_version_id: uuid.UUID | None = None
     ocurrido_at: datetime | None = None
+    deshecho: bool = False
     id: uuid.UUID = field(default_factory=uuid.uuid4)
     created_at: datetime | None = None
     updated_at: datetime | None = None

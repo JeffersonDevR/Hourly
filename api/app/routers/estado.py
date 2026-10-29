@@ -3,6 +3,8 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
+from app.ai import ai_disponible
+
 router = APIRouter(tags=["estado"])
 
 
@@ -13,9 +15,5 @@ class EstadoResponse(BaseModel):
 
 @router.get("/estado", response_model=EstadoResponse)
 def leer_estado() -> EstadoResponse:
-    """Sonda de salud de la API.
-
-    `ai_disponible` queda en `False` hasta que exista el proveedor de IA
-    (fase 8, D-002). La app es 100% funcional en ese estado.
-    """
-    return EstadoResponse(ok=True, ai_disponible=False)
+    """Sonda de salud. `ai_disponible=false` es un estado válido: todo funciona igual."""
+    return EstadoResponse(ok=True, ai_disponible=ai_disponible())

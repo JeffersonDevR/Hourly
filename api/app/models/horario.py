@@ -74,6 +74,10 @@ class SesionDB(TimestampMixin, Base):
     )
     dia: Mapped[int] = mapped_column(sa.SmallInteger)
     bloque_id: Mapped[uuid.UUID] = mapped_column(sa.Uuid, sa.ForeignKey("bloque.id"))
+    # Pin (D-017): `generar` no mueve esta sesión. Sin ningún pin, D-008 manda.
+    fijada: Mapped[bool] = mapped_column(
+        sa.Boolean, nullable=False, default=False, server_default=sa.false()
+    )
 
 
 class EscenarioCambioDB(TimestampMixin, Base):

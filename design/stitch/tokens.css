@@ -1,7 +1,10 @@
 /* ============================================================================
    Academic Grid Matrix — Dark Accessible · v3
    Exportado de Stitch · proyecto 3916526485862441063
-   Design system: assets/44af003a88054ae8806013207408fd99
+   Design system: assets/44af003a88054ae8806013207408fd99 (DARK)
+   OJO: el proyecto tiene LIGHT por defecto y su tertiary es #5EEAD4 (turquesa), no
+   este lila. No aplicar `apply_design_system` sobre una pantalla: pisa el acento.
+   Ver design/stitch/README.md §11.
    Consumido por /fase-06-ui-shell. No inventar tokens nuevos.
    Contraste: todo texto verificado AAA (>= 7:1). No aclarar muted.
    ========================================================================= */
@@ -48,6 +51,10 @@
   --mh-danger:            #FF9C93;
   --mh-danger-surface:    #2C1310;
 
+  /* --- Escala responsive: los tamaños que Tailwind consume --- */
+  --mh-size-body:         17px;
+  --mh-size-h1:           32px;
+
   /* --- Tipografia (Inter. Nunca por debajo de 14px) --- */
   --mh-font:              "Inter", system-ui, sans-serif;
   --mh-display:           600 40px/48px var(--mh-font);
@@ -81,7 +88,7 @@
   --mh-row-table:        56px;
   --mh-row-checklist:    64px;
   --mh-cell-height:      64px;
-  --mh-rail-width:       88px;
+  --mh-rail-width:       120px;  /* 'Configuración' entra entera a 14px */
   --mh-topbar-height:    72px;
   --mh-content-max:      1440px;
   --mh-shadow-card:      0 16px 40px rgba(0, 0, 0, 0.5);
@@ -151,7 +158,7 @@
 }
 
 /* --- >= 1280px: escritorio completo -------------------------------------- */
-/* Rail 88px con etiqueta. Cuadricula de 5 dias. Panel lateral de 320px
+/* Rail 120px con etiqueta entera. Cuadricula de 5 dias. Panel lateral de 320px
    junto a la cuadricula. Texto base 17px. */
 
 /* --- 1024px a 1279px: laptop / tablet horizontal ------------------------- */
@@ -161,7 +168,9 @@
    Texto base 16px. */
 @media (max-width: 1279px) {
   :root {
-    --mh-rail-width: 72px;
+    --mh-rail-width: 100px;
+    --mh-size-body: 16px;
+    --mh-size-h1: 28px;
     --mh-body: 400 16px/26px var(--mh-font);
     --mh-h1: 600 28px/36px var(--mh-font);
   }
@@ -201,7 +210,7 @@
 /* Lockup vertical para la barra lateral de 88px (el horizontal no cabe). */
 .brand-rail {
   display: flex; flex-direction: column; align-items: center;
-  gap: 6px; padding: 16px 0; border-bottom: 1px solid var(--mh-border);
+  gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--mh-border);
 }
 .brand-rail__word {
   font: 600 15px/20px var(--mh-font);

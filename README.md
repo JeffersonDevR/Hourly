@@ -41,8 +41,9 @@ Esta es la diferencia con casi todo lo demás.
 | Importador Excel | Lectura, preview con errores por fila, upsert idempotente | ✅ |
 | Validador | 11 códigos de conflicto, escenarios, gravedad por contexto | ✅ |
 | Solver CP-SAT | Generación, reparación greedy, penalización blanda | ✅ |
-| API | Endpoints de sesiones, propuestas, publicación | ⬜ |
-| Interfaz | Layout, grilla drag & drop, panel de conflictos | ⬜ |
+| API | 66 operaciones: catálogos, sesiones, generar, validar, propuestas, reglas, escenario, publicar, export | ✅ |
+| Interfaz | 11 pantallas: importar en 4 pasos, grilla drag & drop, conflictos, reglas, escenario, publicación, configuración manual | ✅ |
+| Demo | `demo.ps1` deja el estado del pitch: 118 de 120 sesiones y 2 sin colocar | ✅ |
 
 Sin login, sin usuarios, sin multi-institución. Un solo administrador — es a propósito.
 
@@ -61,12 +62,50 @@ Sin login, sin usuarios, sin multi-institución. Un solo administrador — es a 
 ```bash
 git clone https://github.com/JeffersonDevR/Hourly.git
 cd Hourly
-uv run --directory api alembic upgrade head
+uv sync --directory api
+corepack pnpm --dir web install
 .\demo.ps1
 ```
 
-Requiere `uv` y Node 24+. `pnpm` no hace falta instalarlo: el script usa `corepack`.
-`.\demo.ps1 -Check` arranca, verifica `/api/estado` y baja todo sin dejar puertos colgados.
+Cinco comandos. `demo.ps1` migra la base, importa el Excel y siembra el estado del guion antes de
+levantar la API (`:8000`) y la web (`:5173`).
+
+- `-Check` arranca, verifica `/api/estado` y baja todo sin dejar puertos colgados.
+- `-SinSemilla` arranca con la base tal como está (para el flujo de importar en vivo).
+- `-Dev` levanta la API con `--reload`.
+
+Requiere `uv` y Node 24+. **Ojo:** Node 25+ ya no trae `corepack`; ahí usá
+`npx --yes pnpm@12.15.0 --dir web install`.
+
+## Variables de entorno
+
+Todas opcionales: sin ninguna, la app funciona completa y el asistente queda apagado.
+
+| Variable | Default | Para qué |
+|---|---|---|
+| `DATABASE_URL` | `sqlite:///./hourly.db` | Cambiarla es volver a Postgres sin tocar código |
+| `AI_BASE_URL` | — | Endpoint compatible con OpenAI (`…/v1`). Ollama local: `http://localhost:11434/v1` |
+| `AI_MODEL` | — | Modelo a usar. Evitar modelos de razonamiento: emiten texto antes del JSON |
+| `AI_API_KEY` | — | Sin las tres variables de IA, el proveedor es `NullProvider` |
+| `SOLVER_TIMEOUT_S` | `20` | Tope de reloj de CP-SAT |
+
+## Arquitectura en una imagen
+
+```mermaid
+flowchart LR
+    X[Excel de la escuela] --> IMP[importador<br/>openpyxl]
+    IMP --> DB[(SQLite<br/>23 tablas)]
+    DB --> VAL[validador<br/>puro, 11 códigos]
+    DB --> SOL[solver CP-SAT<br/>+ greedy determinista]
+    VAL --> API[FastAPI<br/>50 operaciones]
+    SOL --> API
+    API --> WEB[React + Vite<br/>10 pantallas]
+    API -. propuestas .-> IA[AIProvider<br/>OpenAI-compatible]
+    IA -. simular + validar .-> VAL
+    API --> EXP[exportación<br/>Excel · PDF]
+```
+
+La línea punteada es la única dependencia externa, y es opcional: si cae, todo lo demás sigue.
 
 ## Datos de demo
 
@@ -82,6 +121,7 @@ fijos el horario no existe; repartiendo Inglés entre D4 y D6, sí. Esa es la de
 - [`docs/STATE.md`](docs/STATE.md) — **estado operativo**: qué falta, en qué orden, y cómo retomar en otra máquina
 - [`docs/DOMAIN.md`](docs/DOMAIN.md) — entidades, invariantes y el mapeo del Excel
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — API, solver, contrato de la IA
-- [`docs/DECISIONS.md`](docs/DECISIONS.md) — las 19 decisiones y por qué
+- [`docs/DECISIONS.md`](docs/DECISIONS.md) — las 22 decisiones y por qué
 - [`docs/GAPS.md`](docs/GAPS.md) — los casos que faltan, sin maquillar
-- [`design/DESIGN.md`](design/DESIGN.md) — el sistema MALLA
+- [`design/stitch/README.md`](design/stitch/README.md) — el sistema de diseño vigente (dark), las 12 pantallas y sus defectos medidos
+- [`docs/DEMO.md`](docs/DEMO.md) — el guion de 3 minutos, paso por paso

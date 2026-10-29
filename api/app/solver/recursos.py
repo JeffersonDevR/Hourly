@@ -131,6 +131,7 @@ def asignar_recursos(
                 dia=sesion.dia,
                 bloque_id=sesion.bloque_id,
                 recurso_id=elegido.id,
+                fijada=sesion.fijada,
                 id=sesion.id,
             )
         )

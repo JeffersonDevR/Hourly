@@ -1,32 +1,11 @@
-# GAPS.md — casos sin cubrir detectados antes de implementar
+# GAPS.md — casos abiertos
 
-Análisis de los 11 comandos de fase contra `DOMAIN.md`, `ARCHITECTURE.md`, `DEMO.md` y `DECISIONS.md`.
-Ordenado por severidad para el pitch. Estado: `abierto` hasta que se resuelva en la fase o en `DECISIONS.md`.
+Solo lo que **sigue sin resolver**. Todo lo demás que estaba acá se cerró y vive en
+`DECISIONS.md`; si dudás de un caso viejo, la respuesta está en la decisión, no en este archivo.
+Estado: `abierto` hasta que se resuelva en la fase o en `DECISIONS.md`.
 
 | Caso | Por qué importa | Dónde | Tipo |
 |---|---|---|---|
-| `make demo` deja el estado precargado (`D-007`), pero `DEMO.md:5` abre con import en vivo y `fase-10:5` define `make demo-reset` como "DB restaurada, lista para importar" | **alto** — decide los primeros 20 s del pitch; dos comandos con estados finales opuestos rompen la demo en la 2ª corrida | `fase-10`, `DEMO.md:5` | contradicción |
-| La IA sigue siendo Anthropic en `AGENTS.md:9`, `ARCHITECTURE.md:11`, `fase-00:6` (`ANTHROPIC_API_KEY`) y `fase-08:4` (`ClaudeProvider`) | **alto** — la fase 8 va a escribir `import anthropic` literalmente | `fase-00`, `fase-08`, docs | contradicción |
-| `CassetteProvider` (`D-002`) no lo pide ninguna fase; `fase-08:7` solo prueba con "proveedor simulado" | **alto** — el piso de demo ante caída de red no lo construye nadie | `fase-08` | faltante |
-| Semántica de `POST /horarios/{v}/generar` sobre sesiones existentes: ¿borra o trata como `fijas`? | **alto** — un "¿y si regenero?" del jurado borra el trabajo manual o lo congela en silencio | `fase-04`, `ARCHITECTURE.md:33` | faltante |
-| Importar el mismo Excel dos veces: sin política de upsert, `curso.codigo` / `docente.codigo` UNIQUE hacen explotar el segundo `confirmar` | **alto** — "mi escuela manda el archivo cada trimestre" es la primera pregunta de un jurado escolar | `fase-02`, `fase-05` | faltante |
-| "Escenario activo" sin lugar: `escenario` no tiene `activo`, pero existen `POST /escenarios/{id}/activar`, el selector global y `horario_version.escenario_id` — tres verdades solapadas | **alto** — el paso 4 del guion depende de esto | `DOMAIN.md:20-22`, `fase-05` | faltante |
-| `D-005` escribía bloques de escenario en `disponibilidad_bloqueo.origen=escenario`, que tiene `UNIQUE(docente, dia, bloque)`: choca con un bloqueo personal previo y nadie borra al desactivar | **alto** — no-op silencioso justo en D1/D3, los de 24/24 | `DOMAIN.md:19`, `fase-09` | faltante |
-| `D-006` huérfano: `asignatura` no tiene `es_pesada`, la tabla de códigos no tiene `ASIGNATURA_PESADA_CONSECUTIVA`, ninguna fase agrega columna, penalidad ni advertencia | **alto** — decisión aceptada sin paso de implementación; `fase-03:4` pide "todos los códigos de la tabla" y lo saltea | `fase-01`, `fase-03`, `fase-04` | huérfano |
-| Editar/borrar una sesión en una versión `publicado`: `POST/PATCH/DELETE /sesiones` nunca mira `horario_version.estado` | **alto** — el guion publica y después arrastra sesiones; indefinido | `fase-05`, `DOMAIN.md:22` | faltante |
-| Deshacer atravesando un publish; el redo no se invalida al editar | **medio** — deshacer es feature declarada y el flujo de IA se apoya en él | `fase-03`, `fase-05` | faltante |
-| `POST /validar` vs `GET /conflictos`: ¿el validador persiste filas? Sin reconciliación, revalidar duplica y lo resuelto queda `abierto` | **medio** — el contador global y el semáforo se desincronizan dentro de la misma demo | `fase-03`, `fase-05` | faltante |
-| `conflicto_sesion` sin `ON DELETE`: con `PRAGMA foreign_keys=ON` (D-001), borrar una sesión con conflicto lanza `IntegrityError` | **medio** — crash introducido por D-001 en edición normal | `fase-01` | faltante |
-| Asignación de recursos es un paso posterior sin backtracking, pero `RECURSO_*` es severidad `error` y el golden 3 exige `validar()` limpio | **medio** — puede volver roja la corrida estrella sin explicación | `fase-04` | faltante |
+| Demanda por curso ≠ 30 indiagnosticable: `diagnosticar_carga` es solo aritmética de docentes y CP-SAT pone `<= 1` sesión por (día,bloque) por curso | **medio** — un Excel sucio produce un diagnóstico "D4" por una causa no relacionada | `fase-04`, `ARCHITECTURE.md:5` | faltante |
 | `propuesta_cambio.cambiar_docente` sobre `sesion_id` o `asignacion_carga_id` sin regla: mutar la asignación reescribe otras versiones; mutar solo la sesión se revierte en el próximo solve | **medio** — el "pasá Inglés a D6" del guion se evapora al regenerar | `fase-08`, `DOMAIN.md:31` | faltante |
-| `enlace_consulta` inventada en `fase-09:4` (token, activar/desactivar), ausente de `DOMAIN.md` y de todos los endpoints | **medio** — migración + modelo + router que ninguna fuente de verdad define | `fase-09`, `DOMAIN.md` | inventado |
-| "Vista móvil simple (hoy / siguiente clase)" la pide `fase-09:4` y es el cierre del guion (`DEMO.md:9`), pero `AGENTS.md:45` dice que las vistas móviles son Fase 2 — NO construir | **medio** — el remate de la demo está declarado fuera de alcance | `AGENTS.md:45` vs `fase-09` | contradicción |
-| "Hoy" / "siguiente clase" sin semántica: `bloque.inicio` sin tipo, sin timezone ni mapeo día-semana→`dia`, sin endpoint | **medio** — el cierre no muestra nada si la demo cae viernes | `DOMAIN.md:10`, `fase-09` | huérfano |
-| `MALLA_INCUMPLIDA` es advertencia en edición y error al publicar, pero `conflicto.gravedad` es una sola columna persistida | **medio** — el mismo conflicto significa dos cosas; "un test por código" no cubre ambas | `DOMAIN.md:51`, `fase-03` | contradicción |
-| Demanda por curso ≠ 30 indiagnosticable: `diagnosticar_carga` es solo aritmética de docentes y CP-SAT fija 1 sesión por (día,bloque) por curso | **medio** — un Excel sucio produce un diagnóstico "D4" por una causa no relacionada | `fase-04`, `ARCHITECTURE.md:5` | faltante |
-| "Historial de versiones con comparación y restaurar" (`fase-09:4`): sin endpoint, sin `restaurado_de` en `horario_version` | **medio** — feature inventada que necesita dominio que nadie especificó | `fase-09` | inventado |
-| `docente.activo` sin regla: no lo excluye del pool del solver, no hay advertencia ni código de conflicto | **bajo** — barato de definir: inactivo ⇒ fuera de `aptitud` efectiva | `DOMAIN.md:12`, `fase-03` | huérfano |
-| `curso.estudiantes` en 0 o NULL: `RECURSO_CAPACIDAD` pasa vacuo o revienta en `None < None` | **bajo** — un curso vacío recibe el aula más chica o el validador tira excepción | `fase-02`, `fase-03` | faltante |
-| `max_sesiones_semana` en 0 o NULL: sin validación, CP-SAT lo trata como duro → INFACTIBLE con causa engañosa; `DOCENTE_SOBRECARGA` sin definir si agrega por docente o por asignación | **bajo** — la pantalla de docentes invita a editarlo | `fase-03` | faltante |
-| DB vacía en primer arranque: `institucion` es "una sola fila" pero nadie la inserta; `/api/estado` y `/horario` sin definir con 0 filas | **bajo** — es lo que ve un jurado tras `clone && make dev` si `make demo` falla | `fase-00`, `fase-05` | faltante |
-| `BLOQUE_NO_CLASE` sin datos en el Excel ("no hay descansos") y `AGENTS.md:45` prohíbe datos inventados, mientras `fase-03:9` exige un test por código | **bajo** — fuerza una excepción documentada a una regla escrita | `fase-03` | contradicción |
+| DB vacía en primer arranque: `institucion` es "una sola fila" pero nadie la inserta; `/api/estado` y `/horario` sin definir con 0 filas | **bajo** — es lo que ve un jurado tras `clone && demo.ps1` si la importación falla | `fase-00`, `fase-05` | faltante |

@@ -1,18 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle, CheckCircle2, Loader2, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 
-import { clavesConsulta, obtenerEstado } from "@/lib/api";
+import { Marca } from "@/components/layout/Marca";
+import { NAVEGACION, NAVEGACION_SECUNDARIA } from "@/lib/navegacion";
+
+import {
+  clavesConsulta,
+  listarConflictos,
+  listarEscenarios,
+  listarVersiones,
+  obtenerEstado,
+} from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { versionMasReciente } from "@/lib/version";
 
-type ChipProps = {
+function Chip({
+  children,
+  tono = "neutral",
+  etiqueta,
+}: {
   children: ReactNode;
   tono?: "neutral" | "ok" | "error" | "muted";
-};
-
-function Chip({ children, tono = "neutral" }: ChipProps) {
+  etiqueta?: string;
+}) {
   return (
     <span
+      aria-label={etiqueta}
       className={cn(
         "inline-flex min-h-[36px] items-center gap-2 rounded-full border px-3 text-label-xs",
         tono === "neutral" && "border-mh-border text-mh-secondary",
@@ -27,36 +42,68 @@ function Chip({ children, tono = "neutral" }: ChipProps) {
 }
 
 /**
- * Barra superior global. En la fase 0 son placeholders visibles: año e institución,
- * guardado, contador de conflictos y selector de escenario llegan con la fase 6.
- * Lo único real es el semáforo, alimentado por `GET /api/estado`.
+ * Barra superior global. El semáforo, el contador de conflictos y el escenario salen de
+ * la versión más reciente. No hay chip de "guardado": cada mutación es una request que
+ * commitea o falla, y el estado de la versión ya lo dice.
  */
 export function TopBar() {
-  const estado = useQuery({
-    queryKey: clavesConsulta.estado,
-    queryFn: obtenerEstado,
+  const { pathname } = useLocation();
+  const actual = [...NAVEGACION, ...NAVEGACION_SECUNDARIA].find((item) => item.ruta === pathname);
+
+  const estado = useQuery({ queryKey: clavesConsulta.estado, queryFn: obtenerEstado });
+  const versiones = useQuery({ queryKey: clavesConsulta.versiones, queryFn: listarVersiones });
+  const escenarios = useQuery({ queryKey: clavesConsulta.escenarios, queryFn: listarEscenarios });
+
+  const version = versiones.data ? versionMasReciente(versiones.data) : undefined;
+  const conflictos = useQuery({
+    queryKey: clavesConsulta.conflictos(version?.id ?? "sin-version"),
+    queryFn: () => listarConflictos(version!.id),
+    enabled: Boolean(version),
   });
 
+  const lista = conflictos.data?.conflictos ?? [];
+  const errores = lista.filter((conflicto) => conflicto.gravedad === "error").length;
+  const advertencias = lista.length - errores;
+  const escenario = escenarios.data?.find((item) => item.id === version?.escenario_id);
+
   return (
-    <header className="flex h-[72px] shrink-0 items-center justify-between gap-4 border-b border-mh-border bg-mh-chrome px-6">
+    <header className="flex min-h-[72px] shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-mh-border bg-mh-chrome px-4 py-2 md:px-6">
       <div className="flex min-w-0 items-center gap-3">
-        <span className="truncate text-body-sm text-mh-secondary">2026 · Institución sin configurar</span>
+        <span className="text-mh-text">
+          <Marca alto={24} etiqueta={false} />
+        </span>
+        <span aria-hidden="true" className="h-6 w-px bg-mh-border" />
+        <span aria-current="page" className="truncate text-body-sm text-mh-secondary">
+          {actual?.etiqueta ?? "Inicio"}
+        </span>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Chip tono="muted">
-          <span aria-hidden="true">—</span>
-          Conflictos
+          {version ? `Versión ${version.numero} · ${version.estado}` : "Sin versión"}
         </Chip>
 
-        <Chip tono="muted">
-          <span aria-hidden="true">—</span>
-          Guardado
-        </Chip>
+        {version ? (
+          <Chip
+            tono={errores > 0 ? "error" : advertencias > 0 ? "neutral" : "ok"}
+            etiqueta={`${errores} errores y ${advertencias} advertencias`}
+          >
+            {errores > 0 ? (
+              <AlertTriangle aria-hidden="true" className="size-4" />
+            ) : (
+              <CheckCircle2 aria-hidden="true" className="size-4" />
+            )}
+            {errores > 0
+              ? `${errores} conflictos`
+              : advertencias > 0
+                ? `${advertencias} avisos`
+                : "Sin conflictos"}
+          </Chip>
+        ) : (
+          <Chip tono="muted">Sin versión de horario</Chip>
+        )}
 
-        <Chip>
-          Escenario: Base
-        </Chip>
+        <Chip tono="muted">Escenario: {escenario?.nombre ?? "Base"}</Chip>
 
         {estado.isPending ? (
           <Chip>
@@ -73,18 +120,9 @@ export function TopBar() {
         ) : null}
 
         {estado.data ? (
-          <Chip tono="ok">
-            <CheckCircle2 aria-hidden="true" className="size-4" />
-            API conectada
-          </Chip>
-        ) : null}
-
-        {estado.data ? (
           <Chip tono={estado.data.ai_disponible ? "ok" : "muted"}>
             <Sparkles aria-hidden="true" className="size-4" />
-            {estado.data.ai_disponible
-              ? "Asistente IA disponible"
-              : "Asistente IA no disponible"}
+            {estado.data.ai_disponible ? "Asistente IA disponible" : "Asistente IA no disponible"}
           </Chip>
         ) : null}
       </div>

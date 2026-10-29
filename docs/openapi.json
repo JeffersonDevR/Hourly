@@ -1,0 +1,4290 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Hourly API",
+    "description": "Generador y validador de horarios escolares sin solapamientos.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/estado": {
+      "get": {
+        "tags": [
+          "estado"
+        ],
+        "summary": "Leer Estado",
+        "description": "Sonda de salud. `ai_disponible=false` es un estado válido: todo funciona igual.",
+        "operationId": "leer_estado_api_estado_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstadoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/importaciones/plantilla": {
+      "get": {
+        "tags": [
+          "importaciones"
+        ],
+        "summary": "Descargar Plantilla",
+        "description": "Plantilla .xlsx con las hojas y encabezados que espera el importador.",
+        "operationId": "descargar_plantilla_api_importaciones_plantilla_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/importaciones": {
+      "post": {
+        "tags": [
+          "importaciones"
+        ],
+        "summary": "Crear Importacion",
+        "description": "Sube un .xlsx y devuelve el preview con un hallazgo por fila problemática.",
+        "operationId": "crear_importacion_api_importaciones_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_crear_importacion_api_importaciones_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Crear Importacion Api Importaciones Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/importaciones/{importacion_id}/filas": {
+      "patch": {
+        "tags": [
+          "importaciones"
+        ],
+        "summary": "Corregir Filas",
+        "description": "Corrige celdas y revalida el libro completo.",
+        "operationId": "corregir_filas_api_importaciones__importacion_id__filas_patch",
+        "parameters": [
+          {
+            "name": "importacion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Importacion Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CorreccionesCuerpo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Corregir Filas Api Importaciones  Importacion Id  Filas Patch"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/importaciones/{importacion_id}/confirmar": {
+      "post": {
+        "tags": [
+          "importaciones"
+        ],
+        "summary": "Confirmar",
+        "description": "Escribe el plan en una transacción, con upsert por clave natural (D-009).",
+        "operationId": "confirmar_api_importaciones__importacion_id__confirmar_post",
+        "parameters": [
+          {
+            "name": "importacion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Importacion Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Confirmar Api Importaciones  Importacion Id  Confirmar Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cursos": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Listar Cursos",
+        "operationId": "listar_cursos_api_cursos_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CursoLeer"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Cursos Api Cursos Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Crear Curso",
+        "operationId": "crear_curso_api_cursos_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CursoCrear"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CursoLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cursos/{curso_id}": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Leer Curso",
+        "operationId": "leer_curso_api_cursos__curso_id__get",
+        "parameters": [
+          {
+            "name": "curso_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Curso Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CursoLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Actualizar Curso",
+        "operationId": "actualizar_curso_api_cursos__curso_id__patch",
+        "parameters": [
+          {
+            "name": "curso_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Curso Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CursoActualizar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CursoLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Eliminar Curso",
+        "operationId": "eliminar_curso_api_cursos__curso_id__delete",
+        "parameters": [
+          {
+            "name": "curso_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Curso Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/docentes": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Listar Docentes",
+        "operationId": "listar_docentes_api_docentes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DocenteLeer"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Docentes Api Docentes Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Crear Docente",
+        "operationId": "crear_docente_api_docentes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocenteCrear"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocenteLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/docentes/{docente_id}": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Leer Docente",
+        "operationId": "leer_docente_api_docentes__docente_id__get",
+        "parameters": [
+          {
+            "name": "docente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Docente Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocenteLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Actualizar Docente",
+        "operationId": "actualizar_docente_api_docentes__docente_id__patch",
+        "parameters": [
+          {
+            "name": "docente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Docente Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocenteActualizar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocenteLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Eliminar Docente",
+        "operationId": "eliminar_docente_api_docentes__docente_id__delete",
+        "parameters": [
+          {
+            "name": "docente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Docente Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recursos": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Listar Recursos",
+        "operationId": "listar_recursos_api_recursos_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RecursoLeer"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Recursos Api Recursos Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Crear Recurso",
+        "operationId": "crear_recurso_api_recursos_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecursoCrear"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecursoLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recursos/{recurso_id}": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Leer Recurso",
+        "operationId": "leer_recurso_api_recursos__recurso_id__get",
+        "parameters": [
+          {
+            "name": "recurso_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Recurso Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecursoLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Actualizar Recurso",
+        "operationId": "actualizar_recurso_api_recursos__recurso_id__patch",
+        "parameters": [
+          {
+            "name": "recurso_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Recurso Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecursoActualizar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecursoLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Eliminar Recurso",
+        "operationId": "eliminar_recurso_api_recursos__recurso_id__delete",
+        "parameters": [
+          {
+            "name": "recurso_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Recurso Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/asignaciones": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Listar Asignaciones",
+        "operationId": "listar_asignaciones_api_asignaciones_get",
+        "parameters": [
+          {
+            "name": "curso_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Curso Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AsignacionLeer"
+                  },
+                  "title": "Response Listar Asignaciones Api Asignaciones Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Crear Asignacion",
+        "operationId": "crear_asignacion_api_asignaciones_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsignacionCrear"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsignacionLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/asignaciones/{asignacion_id}": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Leer Asignacion",
+        "operationId": "leer_asignacion_api_asignaciones__asignacion_id__get",
+        "parameters": [
+          {
+            "name": "asignacion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Asignacion Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsignacionLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Actualizar Asignacion",
+        "operationId": "actualizar_asignacion_api_asignaciones__asignacion_id__patch",
+        "parameters": [
+          {
+            "name": "asignacion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Asignacion Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsignacionActualizar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsignacionLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Eliminar Asignacion",
+        "operationId": "eliminar_asignacion_api_asignaciones__asignacion_id__delete",
+        "parameters": [
+          {
+            "name": "asignacion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Asignacion Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tipos-recurso": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Listar Tipos Recurso",
+        "operationId": "listar_tipos_recurso_api_tipos_recurso_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TipoRecursoLeer"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Tipos Recurso Api Tipos Recurso Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Crear Tipo Recurso",
+        "operationId": "crear_tipo_recurso_api_tipos_recurso_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TipoRecursoCrear"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TipoRecursoLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tipos-recurso/{codigo}": {
+      "delete": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Eliminar Tipo Recurso",
+        "operationId": "eliminar_tipo_recurso_api_tipos_recurso__codigo__delete",
+        "parameters": [
+          {
+            "name": "codigo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Codigo"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/aptitudes": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Listar Aptitudes",
+        "operationId": "listar_aptitudes_api_aptitudes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AptitudLeer"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Aptitudes Api Aptitudes Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Crear Aptitud",
+        "operationId": "crear_aptitud_api_aptitudes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AptitudCrear"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AptitudLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/aptitudes/{docente_id}/{asignatura_id}": {
+      "delete": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Eliminar Aptitud",
+        "operationId": "eliminar_aptitud_api_aptitudes__docente_id___asignatura_id__delete",
+        "parameters": [
+          {
+            "name": "docente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Docente Id"
+            }
+          },
+          {
+            "name": "asignatura_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Asignatura Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/grados": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Listar Grados",
+        "operationId": "listar_grados_api_grados_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/GradoLeer"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Grados Api Grados Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Crear Grado",
+        "operationId": "crear_grado_api_grados_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GradoCrear"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GradoLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/grados/{grado_id}": {
+      "patch": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Actualizar Grado",
+        "operationId": "actualizar_grado_api_grados__grado_id__patch",
+        "parameters": [
+          {
+            "name": "grado_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Grado Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GradoActualizar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GradoLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Eliminar Grado",
+        "operationId": "eliminar_grado_api_grados__grado_id__delete",
+        "parameters": [
+          {
+            "name": "grado_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Grado Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bloques": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Listar Bloques",
+        "operationId": "listar_bloques_api_bloques_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BloqueLeer"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Bloques Api Bloques Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Crear Bloque",
+        "operationId": "crear_bloque_api_bloques_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BloqueCrear"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BloqueLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bloques/{bloque_id}": {
+      "patch": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Actualizar Bloque",
+        "operationId": "actualizar_bloque_api_bloques__bloque_id__patch",
+        "parameters": [
+          {
+            "name": "bloque_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bloque Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BloqueActualizar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BloqueLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Eliminar Bloque",
+        "operationId": "eliminar_bloque_api_bloques__bloque_id__delete",
+        "parameters": [
+          {
+            "name": "bloque_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bloque Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/asignaturas": {
+      "get": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Listar Asignaturas",
+        "operationId": "listar_asignaturas_api_asignaturas_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AsignaturaLeer"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Asignaturas Api Asignaturas Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Crear Asignatura",
+        "operationId": "crear_asignatura_api_asignaturas_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsignaturaCrear"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsignaturaLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/asignaturas/{asignatura_id}": {
+      "patch": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Actualizar Asignatura",
+        "operationId": "actualizar_asignatura_api_asignaturas__asignatura_id__patch",
+        "parameters": [
+          {
+            "name": "asignatura_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Asignatura Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsignaturaActualizar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsignaturaLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "catalogos"
+        ],
+        "summary": "Eliminar Asignatura",
+        "operationId": "eliminar_asignatura_api_asignaturas__asignatura_id__delete",
+        "parameters": [
+          {
+            "name": "asignatura_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Asignatura Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/escenarios": {
+      "get": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Listar Escenarios",
+        "operationId": "listar_escenarios_api_escenarios_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Escenarios Api Escenarios Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Crear Escenario",
+        "operationId": "crear_escenario_api_escenarios_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EscenarioCrear"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Crear Escenario Api Escenarios Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios": {
+      "get": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Listar Versiones",
+        "operationId": "listar_versiones_api_horarios_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/VersionLeer"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Versiones Api Horarios Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Crear Version",
+        "operationId": "crear_version_api_horarios_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionCrear"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}": {
+      "get": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Leer Version",
+        "operationId": "leer_version_api_horarios__version_id__get",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/vista": {
+      "get": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Vista",
+        "description": "Sesiones de la versión, filtradas por curso, docente o recurso.",
+        "operationId": "vista_api_horarios__version_id__vista_get",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          },
+          {
+            "name": "por",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(curso|docente|recurso)$",
+              "default": "curso",
+              "title": "Por"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Vista Api Horarios  Version Id  Vista Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/sesiones": {
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Colocar Sesion",
+        "operationId": "colocar_sesion_api_horarios__version_id__sesiones_post",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SesionCrear"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Colocar Sesion Api Horarios  Version Id  Sesiones Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/sesiones/{sesion_id}": {
+      "patch": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Mover Sesion",
+        "operationId": "mover_sesion_api_horarios__version_id__sesiones__sesion_id__patch",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          },
+          {
+            "name": "sesion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Sesion Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SesionMover"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Mover Sesion Api Horarios  Version Id  Sesiones  Sesion Id  Patch"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Quitar Sesion",
+        "operationId": "quitar_sesion_api_horarios__version_id__sesiones__sesion_id__delete",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          },
+          {
+            "name": "sesion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Sesion Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/validar": {
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Validar Version",
+        "operationId": "validar_version_api_horarios__version_id__validar_post",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ValidarCuerpo"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Datos"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Validar Version Api Horarios  Version Id  Validar Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/conflictos": {
+      "get": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Listar Conflictos",
+        "operationId": "listar_conflictos_api_horarios__version_id__conflictos_get",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Listar Conflictos Api Horarios  Version Id  Conflictos Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/generar": {
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Generar",
+        "operationId": "generar_api_horarios__version_id__generar_post",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerarCuerpo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Generar Api Horarios  Version Id  Generar Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/escenario": {
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Probar Escenario",
+        "description": "Vista previa y aplicación del escenario \"¿y si…?\".\n\nCon `aplicar=false` no escribe nada: resuelve con el overlay, cuenta las sesiones\nafectadas y devuelve el prospecto. Con `aplicar=true` fija `horario_version.escenario_id`\n(D-010: la versión es la única verdad) y persiste el plan.",
+        "operationId": "probar_escenario_api_horarios__version_id__escenario_post",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EscenarioCuerpo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Probar Escenario Api Horarios  Version Id  Escenario Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/publicar": {
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Publicar Version",
+        "operationId": "publicar_version_api_horarios__version_id__publicar_post",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionLeer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conflictos/{conflicto_id}/propuestas": {
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Crear Propuestas",
+        "operationId": "crear_propuestas_api_conflictos__conflicto_id__propuestas_post",
+        "parameters": [
+          {
+            "name": "conflicto_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conflicto Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Crear Propuestas Api Conflictos  Conflicto Id  Propuestas Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/propuestas/{propuesta_id}/aceptar": {
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Aceptar Propuesta",
+        "operationId": "aceptar_propuesta_api_propuestas__propuesta_id__aceptar_post",
+        "parameters": [
+          {
+            "name": "propuesta_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Propuesta Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Aceptar Propuesta Api Propuestas  Propuesta Id  Aceptar Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/propuestas/{propuesta_id}/rechazar": {
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Rechazar Propuesta",
+        "operationId": "rechazar_propuesta_api_propuestas__propuesta_id__rechazar_post",
+        "parameters": [
+          {
+            "name": "propuesta_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Propuesta Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Rechazar Propuesta Api Propuestas  Propuesta Id  Rechazar Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/deshacer": {
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Deshacer",
+        "operationId": "deshacer_api_horarios__version_id__deshacer_post",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Deshacer Api Horarios  Version Id  Deshacer Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/rehacer": {
+      "post": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Rehacer",
+        "operationId": "rehacer_api_horarios__version_id__rehacer_post",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Rehacer Api Horarios  Version Id  Rehacer Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/arrastre": {
+      "get": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Arrastre",
+        "description": "Estado de cada franja para arrastrar esa asignatura: válida, advertencia o bloqueada.\n\nshortcut: 30 `validar()` completos por request (~50 ms). Si la grilla lo pide por\ncada movimiento, cachear las reglas que no dependen de la sesión.",
+        "operationId": "arrastre_api_horarios__version_id__arrastre_get",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          },
+          {
+            "name": "asignacion_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Asignacion Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Arrastre Api Horarios  Version Id  Arrastre Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/horarios/{version_id}/exportar": {
+      "get": {
+        "tags": [
+          "horarios"
+        ],
+        "summary": "Exportar",
+        "operationId": "exportar_api_horarios__version_id__exportar_get",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Version Id"
+            }
+          },
+          {
+            "name": "formato",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(xlsx|pdf)$",
+              "default": "xlsx",
+              "title": "Formato"
+            }
+          },
+          {
+            "name": "por",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(curso|docente|recurso|general)$",
+              "default": "general",
+              "title": "Por"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reglas/interpretar": {
+      "post": {
+        "tags": [
+          "reglas"
+        ],
+        "summary": "Interpretar",
+        "description": "Frase → regla estructurada editable. `regla: null` significa \"elegila a mano\".",
+        "operationId": "interpretar_api_reglas_interpretar_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InterpretarCuerpo"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Interpretar Api Reglas Interpretar Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reglas/confirmar": {
+      "post": {
+        "tags": [
+          "reglas"
+        ],
+        "summary": "Confirmar",
+        "operationId": "confirmar_api_reglas_confirmar_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmarCuerpo"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Confirmar Api Reglas Confirmar Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AptitudCrear": {
+        "properties": {
+          "docente_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Docente Id"
+          },
+          "asignatura_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Asignatura Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "docente_id",
+          "asignatura_id"
+        ],
+        "title": "AptitudCrear"
+      },
+      "AptitudLeer": {
+        "properties": {
+          "docente_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Docente Id"
+          },
+          "asignatura_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Asignatura Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "docente_id",
+          "asignatura_id"
+        ],
+        "title": "AptitudLeer"
+      },
+      "AsignacionActualizar": {
+        "properties": {
+          "curso_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Curso Id"
+          },
+          "asignatura_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asignatura Id"
+          },
+          "docente_principal_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Docente Principal Id"
+          },
+          "sesiones_semana": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sesiones Semana"
+          },
+          "tipo_recurso_requerido": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo Recurso Requerido"
+          }
+        },
+        "type": "object",
+        "title": "AsignacionActualizar"
+      },
+      "AsignacionCrear": {
+        "properties": {
+          "curso_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Curso Id"
+          },
+          "asignatura_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Asignatura Id"
+          },
+          "docente_principal_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Docente Principal Id"
+          },
+          "sesiones_semana": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Sesiones Semana"
+          },
+          "tipo_recurso_requerido": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Tipo Recurso Requerido"
+          }
+        },
+        "type": "object",
+        "required": [
+          "curso_id",
+          "asignatura_id",
+          "docente_principal_id",
+          "sesiones_semana",
+          "tipo_recurso_requerido"
+        ],
+        "title": "AsignacionCrear"
+      },
+      "AsignacionLeer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "curso_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Curso Id"
+          },
+          "asignatura_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Asignatura Id"
+          },
+          "docente_principal_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Docente Principal Id"
+          },
+          "sesiones_semana": {
+            "type": "integer",
+            "title": "Sesiones Semana"
+          },
+          "tipo_recurso_requerido": {
+            "type": "string",
+            "title": "Tipo Recurso Requerido"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "curso_id",
+          "asignatura_id",
+          "docente_principal_id",
+          "sesiones_semana",
+          "tipo_recurso_requerido"
+        ],
+        "title": "AsignacionLeer"
+      },
+      "AsignaturaActualizar": {
+        "properties": {
+          "nombre": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 16,
+                "minLength": 4
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Color"
+          },
+          "es_pesada": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Es Pesada"
+          }
+        },
+        "type": "object",
+        "title": "AsignaturaActualizar"
+      },
+      "AsignaturaCrear": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Nombre"
+          },
+          "color": {
+            "type": "string",
+            "maxLength": 16,
+            "minLength": 4,
+            "title": "Color"
+          },
+          "es_pesada": {
+            "type": "boolean",
+            "title": "Es Pesada",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre",
+          "color"
+        ],
+        "title": "AsignaturaCrear"
+      },
+      "AsignaturaLeer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "color": {
+            "type": "string",
+            "title": "Color"
+          },
+          "es_pesada": {
+            "type": "boolean",
+            "title": "Es Pesada"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "color",
+          "es_pesada"
+        ],
+        "title": "AsignaturaLeer"
+      },
+      "BloqueActualizar": {
+        "properties": {
+          "codigo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codigo"
+          },
+          "orden": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orden"
+          },
+          "inicio": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inicio"
+          },
+          "fin": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fin"
+          },
+          "tipo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TipoBloque"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "duracion_min": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duracion Min"
+          }
+        },
+        "type": "object",
+        "title": "BloqueActualizar"
+      },
+      "BloqueCrear": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Codigo"
+          },
+          "orden": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Orden"
+          },
+          "inicio": {
+            "type": "string",
+            "format": "time",
+            "title": "Inicio"
+          },
+          "fin": {
+            "type": "string",
+            "format": "time",
+            "title": "Fin"
+          },
+          "tipo": {
+            "$ref": "#/components/schemas/TipoBloque",
+            "default": "clase"
+          },
+          "duracion_min": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duracion Min"
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo",
+          "orden",
+          "inicio",
+          "fin"
+        ],
+        "title": "BloqueCrear"
+      },
+      "BloqueLeer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "orden": {
+            "type": "integer",
+            "title": "Orden"
+          },
+          "inicio": {
+            "title": "Inicio"
+          },
+          "fin": {
+            "title": "Fin"
+          },
+          "duracion_min": {
+            "type": "integer",
+            "title": "Duracion Min"
+          },
+          "tipo": {
+            "type": "string",
+            "title": "Tipo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "codigo",
+          "orden",
+          "inicio",
+          "fin",
+          "duracion_min",
+          "tipo"
+        ],
+        "title": "BloqueLeer"
+      },
+      "Body_crear_importacion_api_importaciones_post": {
+        "properties": {
+          "archivo": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "Archivo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "archivo"
+        ],
+        "title": "Body_crear_importacion_api_importaciones_post"
+      },
+      "ConfirmarCuerpo": {
+        "properties": {
+          "docente_codigo": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Docente Codigo"
+          },
+          "dias": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Dias"
+          },
+          "bloque_codigo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bloque Codigo"
+          },
+          "bloquea": {
+            "type": "boolean",
+            "title": "Bloquea",
+            "default": true
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "docente_codigo",
+          "dias"
+        ],
+        "title": "ConfirmarCuerpo"
+      },
+      "CorreccionCuerpo": {
+        "properties": {
+          "hoja": {
+            "type": "string",
+            "title": "Hoja"
+          },
+          "fila": {
+            "type": "integer",
+            "title": "Fila"
+          },
+          "columna": {
+            "type": "string",
+            "title": "Columna"
+          },
+          "valor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hoja",
+          "fila",
+          "columna"
+        ],
+        "title": "CorreccionCuerpo",
+        "description": "Una celda a corregir, identificada igual que en el hallazgo."
+      },
+      "CorreccionesCuerpo": {
+        "properties": {
+          "correcciones": {
+            "items": {
+              "$ref": "#/components/schemas/CorreccionCuerpo"
+            },
+            "type": "array",
+            "title": "Correcciones"
+          }
+        },
+        "type": "object",
+        "title": "CorreccionesCuerpo"
+      },
+      "CursoActualizar": {
+        "properties": {
+          "codigo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codigo"
+          },
+          "nombre": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre"
+          },
+          "grado_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grado Id"
+          },
+          "estudiantes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estudiantes"
+          }
+        },
+        "type": "object",
+        "title": "CursoActualizar"
+      },
+      "CursoCrear": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Codigo"
+          },
+          "nombre": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Nombre"
+          },
+          "grado_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Grado Id"
+          },
+          "estudiantes": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Estudiantes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo",
+          "nombre",
+          "grado_id",
+          "estudiantes"
+        ],
+        "title": "CursoCrear"
+      },
+      "CursoLeer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "grado_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Grado Id"
+          },
+          "estudiantes": {
+            "type": "integer",
+            "title": "Estudiantes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "codigo",
+          "nombre",
+          "grado_id",
+          "estudiantes"
+        ],
+        "title": "CursoLeer"
+      },
+      "DocenteActualizar": {
+        "properties": {
+          "codigo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codigo"
+          },
+          "nombre": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre"
+          },
+          "max_sesiones_semana": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Sesiones Semana"
+          },
+          "activo": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activo"
+          }
+        },
+        "type": "object",
+        "title": "DocenteActualizar"
+      },
+      "DocenteCrear": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Codigo"
+          },
+          "nombre": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Nombre"
+          },
+          "max_sesiones_semana": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Max Sesiones Semana"
+          },
+          "activo": {
+            "type": "boolean",
+            "title": "Activo",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo",
+          "nombre",
+          "max_sesiones_semana"
+        ],
+        "title": "DocenteCrear"
+      },
+      "DocenteLeer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "max_sesiones_semana": {
+            "type": "integer",
+            "title": "Max Sesiones Semana"
+          },
+          "activo": {
+            "type": "boolean",
+            "title": "Activo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "codigo",
+          "nombre",
+          "max_sesiones_semana",
+          "activo"
+        ],
+        "title": "DocenteLeer"
+      },
+      "EscenarioCrear": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Nombre"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre"
+        ],
+        "title": "EscenarioCrear"
+      },
+      "EscenarioCuerpo": {
+        "properties": {
+          "escenario_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Escenario Id"
+          },
+          "aplicar": {
+            "type": "boolean",
+            "title": "Aplicar",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "escenario_id"
+        ],
+        "title": "EscenarioCuerpo"
+      },
+      "EstadoResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok"
+          },
+          "ai_disponible": {
+            "type": "boolean",
+            "title": "Ai Disponible"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok",
+          "ai_disponible"
+        ],
+        "title": "EstadoResponse"
+      },
+      "EstadoVersion": {
+        "type": "string",
+        "enum": [
+          "borrador",
+          "publicado",
+          "archivado"
+        ],
+        "title": "EstadoVersion"
+      },
+      "GenerarCuerpo": {
+        "properties": {
+          "modo_docente": {
+            "type": "string",
+            "title": "Modo Docente",
+            "default": "habilitados"
+          },
+          "escenario_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escenario Id"
+          },
+          "solo_curso_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solo Curso Id"
+          },
+          "limpiar": {
+            "type": "boolean",
+            "title": "Limpiar",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "GenerarCuerpo"
+      },
+      "GradoActualizar": {
+        "properties": {
+          "nombre": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 60,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre"
+          },
+          "orden": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orden"
+          }
+        },
+        "type": "object",
+        "title": "GradoActualizar"
+      },
+      "GradoCrear": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Nombre"
+          },
+          "orden": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Orden"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre",
+          "orden"
+        ],
+        "title": "GradoCrear"
+      },
+      "GradoLeer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "orden": {
+            "type": "integer",
+            "title": "Orden"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "orden"
+        ],
+        "title": "GradoLeer"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InterpretarCuerpo": {
+        "properties": {
+          "texto": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Texto"
+          }
+        },
+        "type": "object",
+        "required": [
+          "texto"
+        ],
+        "title": "InterpretarCuerpo"
+      },
+      "RecursoActualizar": {
+        "properties": {
+          "codigo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codigo"
+          },
+          "nombre": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre"
+          },
+          "tipo_recurso": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo Recurso"
+          },
+          "capacidad": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacidad"
+          },
+          "curso_titular_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Curso Titular Id"
+          }
+        },
+        "type": "object",
+        "title": "RecursoActualizar"
+      },
+      "RecursoCrear": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Codigo"
+          },
+          "nombre": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Nombre"
+          },
+          "tipo_recurso": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Tipo Recurso"
+          },
+          "capacidad": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Capacidad"
+          },
+          "curso_titular_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Curso Titular Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo",
+          "nombre",
+          "tipo_recurso",
+          "capacidad"
+        ],
+        "title": "RecursoCrear"
+      },
+      "RecursoLeer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "tipo_recurso": {
+            "type": "string",
+            "title": "Tipo Recurso"
+          },
+          "capacidad": {
+            "type": "integer",
+            "title": "Capacidad"
+          },
+          "curso_titular_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Curso Titular Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "codigo",
+          "nombre",
+          "tipo_recurso",
+          "capacidad",
+          "curso_titular_id"
+        ],
+        "title": "RecursoLeer"
+      },
+      "SesionCrear": {
+        "properties": {
+          "asignacion_carga_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Asignacion Carga Id"
+          },
+          "dia": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Dia"
+          },
+          "bloque_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Bloque Id"
+          },
+          "docente_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Docente Id"
+          },
+          "recurso_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recurso Id"
+          },
+          "fijada": {
+            "type": "boolean",
+            "title": "Fijada",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "asignacion_carga_id",
+          "dia",
+          "bloque_id"
+        ],
+        "title": "SesionCrear"
+      },
+      "SesionMover": {
+        "properties": {
+          "dia": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 5.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dia"
+          },
+          "bloque_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bloque Id"
+          },
+          "docente_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Docente Id"
+          },
+          "recurso_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recurso Id"
+          },
+          "fijada": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fijada"
+          }
+        },
+        "type": "object",
+        "title": "SesionMover"
+      },
+      "TipoBloque": {
+        "type": "string",
+        "enum": [
+          "clase",
+          "descanso",
+          "almuerzo"
+        ],
+        "title": "TipoBloque",
+        "description": "Naturaleza del bloque: solo `clase` admite sesiones."
+      },
+      "TipoRecursoCrear": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Codigo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo"
+        ],
+        "title": "TipoRecursoCrear"
+      },
+      "TipoRecursoLeer": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo"
+        ],
+        "title": "TipoRecursoLeer"
+      },
+      "ValidarCuerpo": {
+        "properties": {
+          "al_publicar": {
+            "type": "boolean",
+            "title": "Al Publicar",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "ValidarCuerpo"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VersionCrear": {
+        "properties": {
+          "nota": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nota"
+          },
+          "escenario_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escenario Id"
+          },
+          "copiar_de": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Copiar De"
+          }
+        },
+        "type": "object",
+        "title": "VersionCrear"
+      },
+      "VersionLeer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "numero": {
+            "type": "integer",
+            "title": "Numero"
+          },
+          "estado": {
+            "$ref": "#/components/schemas/EstadoVersion"
+          },
+          "escenario_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escenario Id"
+          },
+          "nota": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nota"
+          },
+          "publicado_at": {
+            "title": "Publicado At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "numero",
+          "estado",
+          "escenario_id",
+          "nota"
+        ],
+        "title": "VersionLeer"
+      }
+    }
+  }
+}

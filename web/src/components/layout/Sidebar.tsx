@@ -1,23 +1,33 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 
-import { NAVEGACION } from "@/lib/navegacion";
+import { Marca } from "@/components/layout/Marca";
+import { NAVEGACION, NAVEGACION_SECUNDARIA } from "@/lib/navegacion";
 import { cn } from "@/lib/utils";
 
-/** Navegación lateral fija: las 9 rutas del MVP + el aviso de Fase 2. */
+const claseItem =
+  "flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-cell px-1 py-1.5 text-center text-label-xs leading-tight transition-colors hover:bg-mh-raised active:bg-mh-sunken [hyphens:auto]";
+
+/**
+ * Barra lateral de `--mh-rail-width` (88px, 72px por debajo de 1280). Lockup vertical
+ * de la marca: el horizontal no cabe. Las etiquetas nunca se ocultan (regla de diseño).
+ */
 export function Sidebar() {
   return (
-    <aside className="flex w-60 shrink-0 flex-col border-r border-mh-border bg-mh-chrome">
-      <div className="flex h-[72px] items-center gap-3 border-b border-mh-border px-5">
-        <span
-          aria-hidden="true"
-          className="flex size-9 items-center justify-center rounded-cell bg-mh-accent text-label-xs text-mh-on-accent"
-        >
-          H
+    <aside className="flex h-full w-[var(--mh-rail-width)] shrink-0 flex-col overflow-hidden border-r border-mh-border bg-mh-chrome">
+      <Link
+        to="/"
+        className="flex flex-col items-center gap-1.5 border-b border-mh-border py-4"
+        aria-label="Hourly, ir a Inicio"
+      >
+        <span className="text-mh-text">
+          <Marca alto={32} etiqueta={false} />
         </span>
-        <span className="text-h3 tracking-[-0.02em] text-mh-text">Hourly</span>
-      </div>
+        <span className="text-[15px] font-semibold leading-5 tracking-[-0.02em] text-mh-text">
+          Hourly
+        </span>
+      </Link>
 
-      <nav aria-label="Navegación principal" className="flex-1 overflow-y-auto px-3 py-4">
+      <nav aria-label="Navegación principal" className="mh-scroll-y min-h-0 flex-1 px-1.5 py-3">
         <ul className="flex flex-col gap-1">
           {NAVEGACION.map(({ ruta, etiqueta, icono: Icono }) => (
             <li key={ruta}>
@@ -26,7 +36,8 @@ export function Sidebar() {
                 end={ruta === "/"}
                 className={({ isActive }) =>
                   cn(
-                    "flex min-h-[44px] items-center gap-3 rounded-cell px-4 text-label text-mh-secondary transition-colors hover:bg-mh-raised hover:text-mh-text",
+                    claseItem,
+                    "text-mh-secondary",
                     isActive && "bg-mh-raised text-mh-text",
                   )
                 }
@@ -34,13 +45,8 @@ export function Sidebar() {
                 {({ isActive }) => (
                   <>
                     <Icono aria-hidden="true" className="size-5 shrink-0" />
-                    <span className="flex-1">{etiqueta}</span>
-                    {isActive ? (
-                      <span
-                        aria-hidden="true"
-                        className="h-5 w-1 rounded-full bg-mh-accent"
-                      />
-                    ) : null}
+                    <span className="w-full">{etiqueta}</span>
+                    <span className="sr-only">{isActive ? " (pantalla actual)" : ""}</span>
                   </>
                 )}
               </NavLink>
@@ -48,18 +54,30 @@ export function Sidebar() {
           ))}
         </ul>
 
-        <p className="mt-6 px-4 pb-2 text-label-xs uppercase tracking-[0.08em] text-mh-muted">
-          Fase 2
-        </p>
+        <p className="mt-5 px-1 pb-1 text-center text-label-xs text-mh-muted">Configuración</p>
+        <ul className="flex flex-col gap-1">
+          {NAVEGACION_SECUNDARIA.map(({ ruta, etiqueta, icono: Icono }) => (
+            <li key={ruta}>
+              <NavLink
+                to={ruta}
+                className={({ isActive }) =>
+                  cn(claseItem, "min-h-[44px] text-mh-muted", isActive && "bg-mh-raised text-mh-text")
+                }
+              >
+                <Icono aria-hidden="true" className="size-4 shrink-0" />
+                <span className="w-full">{etiqueta}</span>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+
         <div
           aria-disabled="true"
-          className="flex min-h-[44px] cursor-not-allowed items-center gap-3 rounded-cell px-4 text-body-sm text-mh-muted"
+          className="mt-5 rounded-cell border border-dashed border-mh-border px-1 py-2 text-center text-label-xs text-mh-muted"
         >
-          Próximamente: Usuarios y Vistas móviles
+          Fase 2: usuarios
         </div>
       </nav>
-
-      <div className="border-t border-mh-border px-5 py-4 text-label-xs text-mh-muted">v0.1.0</div>
     </aside>
   );
 }

@@ -84,8 +84,11 @@ rompe la importación en silencio si se implementa la lectura literal de la tabl
    seriales de Excel (`0.2916667` = 07:00); `openpyxl` los devuelve como `datetime.time` (07:00)
    porque las celdas están formateadas como hora. La coerción debe aceptar AMBAS formas:
    `time`, `datetime`, serial `float` y texto. Los seis bloques van de 07:00 a 13:00.
-3. **`Bloques` no trae `tipo` ni `duracion_min`.** Derivar `tipo=clase` y
-   `duracion_min = fin - inicio` (60). De ahí sale `SIN_DESCANSOS`, que es correcto y esperado.
+3. **`Bloques` no trae `tipo` ni `duracion_min`.** Derivar `duracion_min = fin - inicio` (60).
+   El `tipo` se infiere por duración: **≤ 30 min es `descanso`** (una clase nunca dura eso; las
+   del archivo real duran 60) y el resto `clase`. El importador avisa con `RECREO_INFERIDO`
+   cuáles infirió, para que se revisen. Con el archivo real, los 6 bloques son de 60 → todo
+   `clase` y sale `SIN_DESCANSOS`, que es correcto y esperado.
 4. **`asignatura.color` no tiene fuente en el Excel.** Asignar una paleta determinista por orden
    alfabético de la asignatura, para que dos importaciones den los mismos colores.
 5. **`dia` es texto español** (`Lunes`…`Viernes`). Mapear a 1..5; un valor desconocido es
